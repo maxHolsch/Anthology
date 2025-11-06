@@ -15,7 +15,7 @@ todo:
 **Anthology** is an interactive visualization platform for exploring community stories through a dynamic, interconnected map interface. The system presents conversations and narratives as a network of nodes, allowing users to navigate through questions, responses, and excerpts in an intuitive visual format.
 
 ## Core Components
-
+testing
 ### 1. Visual Map System
 
 #### Node Types and Behavior
@@ -73,6 +73,9 @@ todo:
 **Question Node View**
 - **Question Text Selected** (when user clicks on floating question text):
   - Display question text prominently in comment rail
+  - Show brief overview/preview of each connected response node
+  - Enable quick navigation between related responses
+  - **Conversation Audio Player**: Prominent play button to play abridged 'medley' of conversation, i.e. a 30 second montage of the most relevant excerpts
   - Show all connected prompt nodes in the comment rail
   - **Conversation Audio Player**: Prominent play button to play entire conversation
   - **Audio Playlist Behavior**:
@@ -87,12 +90,11 @@ todo:
 
 **Multi-Node View**
 - Display abridged versions of all selected nodes (unlimited capacity)
-- Dynamic layout adjusts to accommodate any number of selected nodes
+- Accommodate any number of selected nodes via scrolling
 - "Click for full text" expansion capability for each node
 - Efficient scrollable container with smart space usage
 - Selection behavior:
-  - Clicking a prompt node: Shows multi-node view with all response nodes attached to that prompt (no question text displayed)
-  - Clicking a question node: Shows question text and all connected prompt nodes (audio playlist available here)
+  - Clicking a prompt node: Selects all response nodes attached to that prompt
   - Manual multi-selection: Hold Shift/Cmd to add individual nodes to selection
 - Intelligent grouping: Automatically organizes related nodes visually in the rail
 
@@ -142,7 +144,7 @@ todo:
   - Click on text to jump to that position in audio
   - Audio continues when selecting different nodes (optional setting)
   - Queue system for playing multiple nodes sequentially
-
+ 
 **Conversation Playback Mode**
 - **Automatic Conversation Play**:
   - Available when clicking a question node - plays responses in random order
