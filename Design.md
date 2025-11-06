@@ -115,9 +115,14 @@ todo:
 
 **Audio-Text Synchronization**
 - **Highlight System**:
+  - Currently playing node highlighted on the map (visual pulse/glow effect)
   - Currently playing text segment highlighted in comment rail
   - Smooth scrolling to keep current audio position in view
-  - Visual indicator showing which node's audio is playing
+  - Active node indicator updates in real-time as audio progresses through playlist
+- **Node Highlighting Logic**:
+  - Single response node playback: Only that node highlighted
+  - Prompt node playlist: Highlight changes dynamically as audio moves from prompt to each response
+  - Highlight transitions smoothly between nodes based on audio timestamps
 - **Interaction**:
   - Click on text to jump to that position in audio
   - Audio continues when selecting different nodes (optional setting)
@@ -154,18 +159,30 @@ todo:
 - Graceful handling of gaps between segments
 
 **Conversation Playlist Management**
+- **Playback Behavior by Node Type**:
+  - **Individual Response Node**: Plays only that specific audio segment (audio_start to audio_end)
+  - **Prompt Node**: Creates playlist starting at prompt's audio_start, continuing through all connected responses' audio_end
+  - **Question Node**: Visual selection only, no direct audio playback (questions are part of prompts)
 - **Playlist Generation**:
-  - Automatically creates ordered playlist when question/prompt node selected
-  - Sorts responses by timestamp for chronological playback
-  - Handles multiple audio files if conversation spans multiple recordings
+  - Prompt node click → Automatic playlist creation: [prompt audio] + [all response audio segments]
+  - Playlist ordered chronologically by timestamps within the conversation
+  - Each node references its parent conversation's audio file
+  - Multiple conversations supported (each with its own audio file)
+- **Dynamic Node Highlighting**:
+  - As audio plays through playlist, the currently playing node gets highlighted on the map
+  - Highlight transitions occur at timestamp boundaries (prompt → response1 → response2, etc.)
+  - Visual feedback shows which specific node's audio is currently playing
+  - Comment rail scrolls to keep currently playing node's text in view
 - **Playback Continuity**:
-  - Gapless playback between response segments
-  - Automatic crossfading option for smoother transitions
+  - Seamless playback within same conversation (single audio file)
+  - Gapless transitions between nodes based on timestamps
   - Memory of playback position if user navigates away and returns
+  - Handles timestamp gaps gracefully (skip)
 - **Queue Controls**:
-  - View upcoming responses in queue
-  - Reorder playback sequence (manual override)
-  - Add/remove individual responses from conversation playback
+  - View upcoming nodes in playlist queue
+  - See timeline with all nodes marked as chapters
+  - Skip to specific response while maintaining playlist context
+  - Clear playlist and start fresh with new node selection
 
 ### 4. Data Processing Pipeline
 
@@ -184,6 +201,20 @@ todo:
 
 #### Data Schema
 
+**Conversation Structure**:
+```
+{
+  "conversation_id": unique_identifier,
+  "audio_file": string (URL or file path to conversation audio),
+  "duration": number (total duration in milliseconds),
+  "metadata": {
+    "title": string (optional),
+    "date": string (optional),
+    "participants": [array of speaker names]
+  }
+}
+```
+
 **Excerpt Node Structure**:
 ```
 {
@@ -193,7 +224,8 @@ todo:
   "speaker_text": string,
   "audio_start": timestamp (milliseconds),
   "audio_end": timestamp (milliseconds),
-  "audio_file": string (optional - URL or file path),
+  "conversation_id": string (reference to parent conversation),
+  "audio_file": string (URL or file path to conversation audio),
   "id": unique_identifier
 }
 ```
@@ -212,8 +244,13 @@ todo:
 
 ### Navigation
 - **Click Selection**:
-  - Click excerpt nodes (circles/squares) to view details in comment rail
-  - Click question text to view question overview and connected responses
+  - Click response node (circle): View details in comment rail + play individual audio segment
+  - Click prompt node (square): View details + create playlist (prompt through all responses)
+  - Click question text: View question overview and connected responses (no audio)
+- **Audio Behavior Summary**:
+  - Response nodes → Play individual segment only
+  - Prompt nodes → Play full conversation playlist (prompt + all responses)
+  - Currently playing node highlighted on map in real-time
 - **Zoom Controls**: Progressive disclosure of information through zoom levels
 - **Pan and Explore**: Free movement through the story map
 
