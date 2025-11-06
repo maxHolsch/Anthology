@@ -1,0 +1,84 @@
+let's say I open the website. What will be the first thing that I see? Describe me it
+
+Let's say I start zooming in with my mouse, what happens?
+
+let's say I click and drag over to another area, what happens? is click and drag availible?
+
+if I click on a question, what happens to my zoom? what happens to my comment rail?
+
+
+what is the font and style of this anthology?
+
+How does the logic for the pause and play audio button work?
+
+
+we should resolve the toolkit used, and do a good job of getting that toolkit together
+
+is a question node related to one audio file?
+
+is playlist generation the same as conversation play?
+
+have it first get a sense of the design + components, then build things in line with them
+
+medeley for questions, none for prompts
+
+
+> for question 1, how would using force-directed graphs cause this to play out? Would the question not be generally close to the cluster of prompt nodes attached to
+  it? WHen I say midpoint, it should be the average midpoint if that makes sense.
+
+  you make a good point about the questions, maybe they should just remain the same size as text on your screen, so the nodes become more and more visible, (and
+  some questions on the side are no longer visible as you zoom in on one part of the screen), but the question you zoom in on remains
+
+  good question about our audio, and it highlights an important thing that we should change in our documentation. Audio playlists should only play when you click on
+  a question, not on a prompt. In fact, when you click on a prompt node, you should not see the text of the question at all. All you see on the comment rail side
+  is the multi-node view, where the selected nodes are the ones which connect to the question node. When you click on the question, the audio playlist button should
+  do the following. If clicked, it will highlight one response node it is connected to (question->prompt node->response node), and play it through before going to
+  the next node. All the while, the prompt nodes should be visible on the comment rail on the side 
+
+
+
+   4. Multi-Node Selection Limits
+
+  - Line 77: "unlimited capacity" for multi-node view
+  - Question: This could cause performance issues with hundreds of nodes. Should there be a practical limit or virtualization strategy mentioned?
+
+  5. Response Node Grouping
+
+  - Line 84: "Clicking a prompt node: Selects all response nodes"
+  - Question: What if a prompt has 50+ responses? Does this flood the comment rail? How does the UI handle extreme cases?
+
+  6. Audio Timestamp Gaps
+
+  - Line 162: "Graceful handling of gaps between segments"
+  - Question: What does "graceful" mean specifically? Skip silence? Insert pause? Play ambient sound? This needs concrete behavior definition.
+
+  7. Data Processing with LLM
+
+  - Lines 200-203: "Utilize LLM for intelligent parsing"
+  - Question: This is vague - what specific parsing is the LLM doing? How does it handle ambiguous or malformed input? What are the fallback strategies if LLM
+  parsing fails?
+
+  8. Force-Directed Graph Parameters
+
+  - Line 328: "Force-directed graph algorithm for organic positioning"
+  - Question: What are the specific force parameters? How do you prevent node overlap? What about stability - do nodes keep moving or settle?
+
+  9. Comment Rail Width
+
+  - Line 335: "Fixed right sidebar (30% width)"
+  - Question: This might be too rigid for different screen sizes. What about mobile? Should this be responsive or have breakpoints?
+
+  10. Zoom Level Dependencies
+
+  - Throughout: Multiple features depend on zoom levels
+  - Question: How are zoom levels measured/defined? Is 25% relative to what baseline? Viewport? Original size?
+
+⏺ 💡 Suggestions for Clarity
+
+  1. Define concrete zoom level measurements (pixels, percentage of viewport, etc.)
+  2. Specify audio gap handling behavior explicitly
+  3. Add performance boundaries for multi-node selection
+  4. Clarify the question node audio behavior contradiction
+  5. Detail the LLM parsing requirements and error handling
+  6. Consider responsive design for the comment rail width
+  7. Define force-directed graph parameters to prevent chaotic movement

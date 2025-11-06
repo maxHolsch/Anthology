@@ -2,7 +2,13 @@
 
 todo:
 [X] question nodes
-[ ] 
+[ ] where do the nodes go? how do they separate? 
+[ ] what does the d3 logic look like?
+[ ] Would we like the nodes to look better than this? Go through figma mcp, see if this is actually in line with that is described
+[ ] prompt node logic for clicks (with multiple prompts)
+[ ] have it be pull quotes instead of nodes?
+[ ] what do the nodes in the back look like? could they get that cool hairl-like sparking structure? what if there were shooting stars across the network?
+[ ] What is our stack?
 
 ## Project Overview
 
@@ -15,16 +21,19 @@ todo:
 #### Node Types and Behavior
 
 **Question Nodes**
-- **Visual Representation**: Displayed as floating text only (no visible node shape or marker) positioned at the geometric midpoint between all connected prompt nodes
+- **Visual Representation**: Displayed as floating text only (no visible node shape or marker) positioned at the average geometric midpoint between all connected prompt nodes
+- **Positioning Logic**:
+  - Force-directed graph naturally clusters related prompt nodes together
+  - Question node positioned at the calculated average position of all connected prompts
+  - This ensures questions remain visually centered within their related prompt clusters
 - **Text Display**:
   - Question text renders directly on the map canvas without any containing shape
-  - Text styling: Larger font size for readability at zoomed-out levels
-  - Optional subtle background blur, shadow, or semi-transparent backdrop for text legibility
+  - Text maintains consistent screen-relative size regardless of zoom level
   - Text acts as clickable area for interaction
 - **Visibility Rules**:
-  - Text visible when zoomed out (zoom level < 25%)
-  - Fade out as user zooms in beyond 25% threshold
-  - Act as navigational landmarks for the overall story structure through text positioning
+  - Text size remains constant relative to screen (not affected by zoom)
+  - As user zooms in, focused questions remain readable while peripheral questions move out of viewport
+  - Questions act as persistent navigational landmarks through consistent text sizing
 - **Data Structure**:
   - Contains question text
   - Maintains array of pointers to related prompt nodes
@@ -64,9 +73,15 @@ todo:
 **Question Node View**
 - **Question Text Selected** (when user clicks on floating question text):
   - Display question text prominently in comment rail
-  - Show brief overview/preview of each connected response node
-  - Enable quick navigation between related responses
+  - Show all connected prompt nodes in the comment rail
   - **Conversation Audio Player**: Prominent play button to play entire conversation
+  - **Audio Playlist Behavior**:
+    - When play is clicked, randomly selects a response node connected to the question (via question → prompt → response path)
+    - Plays that response node, then randomly selects another connected response
+    - Continues random selection through all connected response nodes
+    - Prompt nodes remain visible in comment rail during playback
+    - Currently playing response node is highlighted on the map in real-time
+    - **Simplified Navigation**: Only previous/next buttons available
   - **Auto-play Option**: Setting to automatically start playing when question text is clicked
   - Reference: [Figma Frame 4-3428](https://www.figma.com/design/3RRAJtxVKX0kbSZT8ouJWa/Anthology-III?node-id=4-3428&t=JN4qdlt1xDfI1Af0-4)
 
@@ -76,8 +91,8 @@ todo:
 - "Click for full text" expansion capability for each node
 - Efficient scrollable container with smart space usage
 - Selection behavior:
-  - Clicking a prompt node: Selects all response nodes attached to that prompt
-  - Clicking a question node: Selects all prompt nodes attached to that question (but not their responses)
+  - Clicking a prompt node: Shows multi-node view with all response nodes attached to that prompt (no question text displayed)
+  - Clicking a question node: Shows question text and all connected prompt nodes (audio playlist available here)
   - Manual multi-selection: Hold Shift/Cmd to add individual nodes to selection
 - Intelligent grouping: Automatically organizes related nodes visually in the rail
 
@@ -130,20 +145,19 @@ todo:
 
 **Conversation Playback Mode**
 - **Automatic Conversation Play**:
-  - When clicking a prompt/question node, automatically plays entire conversation
-  - Seamlessly transitions between all connected response nodes
-  - Maintains chronological order based on timestamps
+  - Available when clicking a question node - plays responses in random order
+  - Individual response nodes play just their audio segment when clicked directly
+  - Randomly selects and plays connected response nodes (no chronological ordering)
   - Visual progress indicator shows position in overall conversation
 - **Playback Settings**:
   - Toggle: "Auto-play full conversation" (user preference)
-  - Option to include or exclude prompt audio in playback
+  - Random selection algorithm for playlist generation
   - Pause between responses (configurable 0-3 seconds)
-  - Skip to next/previous response in conversation
+  - Skip to next random response in conversation
 - **Visual Feedback**:
-  - Timeline shows all response segments as chapters
+  - Timeline shows only current segment progress
   - Currently playing response highlighted in comment rail overview
   - Node on map pulses/highlights when its audio is playing
-  - Progress bar shows both segment progress and conversation progress
 
 #### Audio Data Management
 
@@ -161,11 +175,11 @@ todo:
 **Conversation Playlist Management**
 - **Playback Behavior by Node Type**:
   - **Individual Response Node**: Plays only that specific audio segment (audio_start to audio_end)
-  - **Prompt Node**: Creates playlist starting at prompt's audio_start, continuing through all connected responses' audio_end
-  - **Question Node**: Visual selection only, no direct audio playback (questions are part of prompts)
+  - **Prompt Node**: No audio playback - shows multi-node view of connected responses
+  - **Question Node**: Creates randomized playlist of all connected response nodes
 - **Playlist Generation**:
-  - Prompt node click → Automatic playlist creation: [prompt audio] + [all response audio segments]
-  - Playlist ordered chronologically by timestamps within the conversation
+  - Question node click → Random playlist creation from all connected responses
+  - Playlist plays responses in random order (not chronological)
   - Each node references its parent conversation's audio file
   - Multiple conversations supported (each with its own audio file)
 - **Dynamic Node Highlighting**:
@@ -178,10 +192,10 @@ todo:
   - Gapless transitions between nodes based on timestamps
   - Memory of playback position if user navigates away and returns
   - Handles timestamp gaps gracefully (skip)
-- **Queue Controls**:
-  - View upcoming nodes in playlist queue
-  - See timeline with all nodes marked as chapters
-  - Skip to specific response while maintaining playlist context
+- **Simplified Queue Controls**:
+  - Previous/Next buttons for navigation through randomized playlist
+  - No visibility of upcoming nodes or total playlist length
+  - Cannot skip to specific responses (only sequential prev/next)
   - Clear playlist and start fresh with new node selection
 
 ### 4. Data Processing Pipeline
@@ -245,11 +259,12 @@ todo:
 ### Navigation
 - **Click Selection**:
   - Click response node (circle): View details in comment rail + play individual audio segment
-  - Click prompt node (square): View details + create playlist (prompt through all responses)
-  - Click question text: View question overview and connected responses (no audio)
+  - Click prompt node (square): View multi-node display of connected responses (no audio)
+  - Click question text: View question overview and prompt nodes + randomized audio playlist option
 - **Audio Behavior Summary**:
   - Response nodes → Play individual segment only
-  - Prompt nodes → Play full conversation playlist (prompt + all responses)
+  - Prompt nodes → No audio playback (display only)
+  - Question nodes → Random playlist of all connected responses
   - Currently playing node highlighted on map in real-time
 - **Zoom Controls**: Progressive disclosure of information through zoom levels
 - **Pan and Explore**: Free movement through the story map
@@ -272,9 +287,9 @@ todo:
   - **Continuous**: Play through all available audio in the story
 - **Keyboard Shortcuts**:
   - Space: Play/Pause
-  - Arrow keys: Skip forward/backward
-  - Shift+Arrow: Next/previous response in conversation
-  - Numbers 1-5: Jump to response N in current conversation
+  - Left Arrow: Previous response in playlist
+  - Right Arrow: Next response in playlist
+  - Shift+Arrow: Seek within current segment
 
 ## Technical Considerations
 
