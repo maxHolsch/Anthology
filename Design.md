@@ -18,26 +18,24 @@ testing
 - **Visual Representation**: Displayed as floating text only (no visible node shape or marker) positioned at the geometric midpoint between all connected prompt nodes
 - **Text Display**:
   - Question text renders directly on the map canvas without any containing shape
-  - Text styling: Larger font size for readability at zoomed-out levels
-  - Optional subtle background blur, shadow, or semi-transparent backdrop for text legibility
+  - Text styling: Medium font size with semantic scaling for readability at zoomed-out levels
   - Text acts as clickable area for interaction
 - **Visibility Rules**:
   - Text visible when zoomed out (zoom level < 25%)
-  - Fade out as user zooms in beyond 25% threshold
   - Act as navigational landmarks for the overall story structure through text positioning
 - **Data Structure**:
   - Contains question text
   - Maintains array of pointers to related prompt nodes
 
 **Excerpt Nodes**
-- **Visual Representation**: Displayed as visible geometric shapes (circles for responses, squares for prompts) that users can interact with
+- **Visual Representation**: Displayed as small circles that users can interact with
 - **Visual States**:
-  - Unselected: Grey circles
-  - Selected/Active: White circles
+  - Unselected: Full color
+  - Selected/Active: Full color, while all other nodes are faded (50% opacity)
   - Reference: [Figma Frame 4-3496](https://www.figma.com/design/3RRAJtxVKX0kbSZT8ouJWa/Anthology-III?node-id=4-3496&t=JN4qdlt1xDfI1Af0-4)
 - **Node Types**:
-  - Prompt nodes: Grey squares when inactive, trigger question display when clicked
-  - Response nodes: Grey circles when inactive, white when selected
+  - Prompt nodes: Small gray circles, trigger question display when clicked. Reference: [Figma Frame 4-3496](https://www.figma.com/design/3RRAJtxVKX0kbSZT8ouJWa/Anthology-III?node-id=4-3496&t=JN4qdlt1xDfI1Af0-4)
+  - Response nodes: Full color. Trigger full individual excerpt display when clicked.
 - **Data Structure**:
   - Type field: "prompt" or "response"
   - "responds_to" field: pointer to parent node
@@ -73,7 +71,7 @@ testing
 **Multi-Node View**
 - Display abridged versions of all selected nodes (unlimited capacity)
 - Accommodate any number of selected nodes via scrolling
-- "Click for full text" expansion capability for each node
+- "Click for full text" expansion capability for each node, which opens individual node view.
 - Efficient scrollable container with smart space usage
 - Selection behavior:
   - Clicking a prompt node: Selects all response nodes attached to that prompt
@@ -81,16 +79,14 @@ testing
 - Intelligent grouping: Automatically organizes related nodes visually in the rail
 
 #### Interface Features
-- **Minimizable Card Design**: Comment rail can be collapsed and expanded
 - **Responsive Layout**: Adapts to different screen sizes and orientations
 - **Smooth Transitions**: Animated transitions between different view modes
 - **Audio Playback Controls**: Integrated audio player for nodes with associated audio
 - **Scalable Multi-Node Handling**:
   - Virtualized scrolling for performance with hundreds of selected nodes
   - Compact card view for large selections (showing speaker name and first line)
-  - Expandable cards to view full content without leaving multi-node view
   - Smart grouping by parent node (responses grouped under their prompt)
-  - Filter/sort options: By speaker, timestamp, or relationship
+  - Filter/sort options: By speaker or conversation
   - Batch operations: Play all selected audio, export selected text, etc.
 
 ### 3. Audio Playback System
@@ -98,26 +94,28 @@ testing
 #### Audio Player Components
 
 **Play Button Design**
-- **Visual Design**:
-  - Circular play/pause button with standard media icons
+- **Big Medley / Summary Button**:
+  - Rectangular play/pause button with standard media icons and time display
+  - Displays countdown timer counting seconds until end of excerpt
   - Located prominently in the comment rail when viewing nodes with audio
-  - Visual states: idle, playing, paused, buffering
-  - Progress indicator showing current position in audio
+  - Fills container width
+  - Visual states: idle, playing, paused
+  - Progress indicator showing current position in audio, can act as timeline scrubber for seeking
+  - Reference: [Figma Frame 4-3428](https://www.figma.com/design/3RRAJtxVKX0kbSZT8ouJWa/Anthology-III?node-id=4-3428&t=JN4qdlt1xDfI1Af0-4)
 
-**Audio Controls**
-- **Primary Controls**:
-  - Play/Pause toggle button
-  - Timeline scrubber for seeking
-  - Current time / total duration display
-  - Volume control slider
+- **Individual Node Play Button**:
+  - Small ectangular play/pause button with standard media icons and time display
+  - Visual states: idle, playing, paused
+  - Displays countdown timer counting seconds until end of excerpt
+  - Progress indicator showing current position in audio, can act as timeline scrubber for seeking
+    - Reference: [Figma Frame 4-3428](https://www.figma.com/design/3RRAJtxVKX0kbSZT8ouJWa/Anthology-III?node-id=4-3428&t=JN4qdlt1xDfI1Af0-4)
 
 
 **Audio-Text Synchronization**
 - **Highlight System**:
-  - Currently playing node highlighted on the map (visual pulse/glow effect)
+  - Currently playing node highlighted on the map (all other nodes are faded to 50% opacity)
   - Currently playing text segment highlighted in comment rail
   - Smooth scrolling to keep current audio position in view
-  - Active node indicator updates in real-time as audio progresses through playlist
 - **Node Highlighting Logic**:
   - Single response node playback: Only that node highlighted
   - Prompt node playlist: Highlight changes dynamically as audio moves from prompt to each response
@@ -126,23 +124,6 @@ testing
   - Click on text to jump to that position in audio
   - Audio continues when selecting different nodes (optional setting)
   - Queue system for playing multiple nodes sequentially
- 
-**Conversation Playback Mode**
-- **Automatic Conversation Play**:
-  - When clicking a prompt/question node, automatically plays that snippet of the conversation,
-  - Seamlessly transitions between all connected response nodes
-  - Maintains chronological order based on timestamps
-  - Visual progress indicator shows position in overall conversation
-- **Playback Settings**:
-  - Toggle: "Auto-play full conversation" (user preference)
-  - Option to include or exclude prompt audio in playback
-  - Pause between responses (configurable 0-3 seconds)
-  - Skip to next/previous response in conversation
-- **Visual Feedback**:
-  - Timeline shows all response segments as chapters
-  - Currently playing response highlighted in comment rail overview
-  - Node on map pulses/highlights when its audio is playing
-  - Progress bar shows both segment progress and conversation progress
 
 #### Audio Data Management
 
@@ -173,15 +154,9 @@ testing
   - Visual feedback shows which specific node's audio is currently playing
   - Comment rail scrolls to keep currently playing node's text in view
 - **Playback Continuity**:
-  - Seamless playback within same conversation (single audio file)
   - Gapless transitions between nodes based on timestamps
   - Memory of playback position if user navigates away and returns
   - Handles timestamp gaps gracefully (skip)
-- **Queue Controls**:
-  - View upcoming nodes in playlist queue
-  - See timeline with all nodes marked as chapters
-  - Skip to specific response while maintaining playlist context
-  - Clear playlist and start fresh with new node selection
 
 ### 4. Data Processing Pipeline
 
@@ -258,24 +233,11 @@ testing
 - **Context Preservation**: Maintain user's place in the narrative
 - **Multi-path Exploration**: Allow non-linear story navigation
 
-### Audio Playback Settings
-- **User Preferences**:
-  - Auto-play conversations when selecting question/prompt nodes (on/off)
-  - Continue playing when switching nodes (on/off)
-  - Playback speed preference (saved between sessions)
-  - Volume level persistence
-  - Transition style between segments (gapless/pause/crossfade)
-- **Playback Modes**:
-  - **Single Node**: Play only selected node's audio
-  - **Conversation**: Play entire conversation thread automatically
-  - **Continuous**: Play through all available audio in the story
 - **Keyboard Shortcuts**:
   - Space: Play/Pause
   - Arrow keys: Skip forward/backward
   - Shift+Arrow: Next/previous response in conversation
   - Numbers 1-5: Jump to response N in current conversation
-
-## Technical Considerations
 
 ### Performance Requirements
 - Smooth rendering of potentially hundreds of nodes
@@ -328,20 +290,20 @@ The interface should follow the aesthetic and interaction patterns demonstrated 
 - **Audio Libraries**: Howler.js or WaveSurfer.js for advanced audio features
 
 ### UI/UX Specifications
-- **Comment Rail**: Fixed right sidebar (30% width), map occupies 70% on left
+- **Comment Rail**: Fixed right sidebar (25% width), map occupies 75% on left
 - **Selection Behavior**:
   - Smart multi-selection mode with contextual behavior
-  - Clicking prompt nodes: Auto-selects all connected response nodes
-  - Clicking question nodes: Auto-selects all connected prompt nodes (not their responses)
+  - Clicking prompt or question nodes: Auto-selects all connected response nodes
   - Clicking response nodes: Adds/removes individual response from selection
   - Shift/Cmd+Click: Manual multi-selection for any combination of nodes
-  - Clear selection: Click on empty map space or use Clear button in comment rail
+  - Clear selection: Click on empty map space
+
 - **Node Display**:
-  - Excerpt nodes: Visible geometric shapes (circles for responses, squares for prompts)
+  - Excerpt nodes: Circles
   - Question nodes: Text-only display without visible node markers
 - **Animation Priority**: Smooth transitions for zoom, pan, and node selection
 - **Visual Feedback**: Hover states, selection highlights, and smooth morphing
-- **Audio Player Position**: Fixed at bottom of comment rail, persists across node selection
+
 - **Audio Visual Integration**:
   - Play button prominently displayed when node has audio
   - Waveform visualization (optional) showing audio timeline
