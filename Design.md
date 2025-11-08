@@ -20,6 +20,7 @@ testing
 
 **Question Nodes**
 - **Visual Representation**: Displayed as floating text only (no visible node shape or marker)
+- **Visual Reference**: https://www.figma.com/design/3RRAJtxVKX0kbSZT8ouJWa/Anthology-III?node-id=95-17718&m=dev
 - **Positioning Logic**:
   - Question nodes are actual nodes in the D3 force-directed graph
   - Prompt nodes have direct connections (links) to their question node
@@ -38,19 +39,22 @@ testing
 
 **Excerpt Nodes**
 - **Visual Representation**: Displayed as visible geometric shapes that users can interact with
-  - **Standard Nodes** (without pull_quote): Circles for responses, squares for prompts
-  - **Pull Quote Nodes** (with pull_quote): Rectangles displaying the quoted text
+  - **Standard Nodes** (without pull_quote): Circles for responses
+    - **Visual Reference**: https://www.figma.com/design/3RRAJtxVKX0kbSZT8ouJWa/Anthology-III?node-id=94-17609&m=dev
+  - **Pull Quote Nodes** (with pull_quote): Slightly rounded rectangles displaying the quoted text
+    - **Visual Reference**: https://www.figma.com/design/3RRAJtxVKX0kbSZT8ouJWa/Anthology-III?node-id=94-17598&m=dev
 - **Visual States**:
   - Unselected: Full color
   - Selected/Active: Full color, while all other nodes are faded (50% opacity)
-  - Reference: [Figma Frame 4-3496](https://www.figma.com/design/3RRAJtxVKX0kbSZT8ouJWa/Anthology-III?node-id=4-3496&t=JN4qdlt1xDfI1Af0-4)
+    - Visual Reference for faded Circle Nodes: https://www.figma.com/design/3RRAJtxVKX0kbSZT8ouJWa/Anthology-III?node-id=103-242&m=dev
+    - Visual Reference for faded Prompt Nodes: https://www.figma.com/design/3RRAJtxVKX0kbSZT8ouJWa/Anthology-III?node-id=103-251&m=dev
 - **Visibility Rules**:
   - Always visible at all zoom levels (no progressive disclosure)
   - Node shapes scale with zoom (get bigger when zooming in)
   - All nodes remain interactive and clickable at any zoom level
 - **Node Types**:
-  - Prompt nodes: Small gray circles, trigger question display when clicked. Reference: [Figma Frame 4-3496](https://www.figma.com/design/3RRAJtxVKX0kbSZT8ouJWa/Anthology-III?node-id=4-3496&t=JN4qdlt1xDfI1Af0-4)
-  - Response nodes: Full color. Trigger full individual excerpt display when clicked.
+  - Prompt nodes: Not displayed.
+  - Response nodes: Trigger full individual excerpt display when clicked.
 - **Data Structure**:
   - Type field: "prompt" or "response"
   - "responds_to" field: pointer to parent node
@@ -80,19 +84,21 @@ testing
 **Single Node View**
 - **Response Node Selected**:
   - Full text display of the selected response
-  - Speaker information and metadata
+  - Speaker name
+  - Response audo player 
   - Beautiful, readable formatting optimized for content consumption
-  - Reference: [Figma Frame 4-3280](https://www.figma.com/design/3RRAJtxVKX0kbSZT8ouJWa/Anthology-III?node-id=4-3280&t=JN4qdlt1xDfI1Af0-4)
+  - Visual Reference: https://www.figma.com/design/3RRAJtxVKX0kbSZT8ouJWa/Anthology-III?node-id=94-17452&m=dev
+    - Response Play Button: https://www.figma.com/design/3RRAJtxVKX0kbSZT8ouJWa/Anthology-III?node-id=94-17564&m=dev
 
 **Question Node View**
-- **Question Text Selected** (when user clicks on floating question text):
+  - **Visual Reference**: https://www.figma.com/design/3RRAJtxVKX0kbSZT8ouJWa/Anthology-III?node-id=94-17360&m=dev
+- **Question Text Selected** (when user clicks on Question Node on Map, or on Question Tile on Comment Rail):
   - Display question text prominently in comment rail
-  - Show all connected prompt nodes in the comment rail (ONLY prompts, NOT their responses)
-  - Brief overview/preview of each prompt node
-  - Enable quick navigation between prompt nodes
-  - **Conversation Audio Player**: Prominent play button to play entire conversation in random order
+  - Show all connected Response Nodes in the comment rail
+
+  - **Conversation Audio Player**: Prominent play button to play 'Conversation Medley', a montage of most relevant excerpts
   - **Audio Playlist Behavior**:
-    - When play is clicked, randomly selects a response node connected to the question (via question → prompt → response path)
+    - When play is clicked
     - Plays that response node, then randomly selects another connected response
     - Continues random selection through all connected response nodes
     - Prompt nodes remain visible in comment rail during playback
@@ -101,7 +107,7 @@ testing
   - **Auto-play Option**: Setting to automatically start playing when question text is clicked
   - Reference: [Figma Frame 4-3428](https://www.figma.com/design/3RRAJtxVKX0kbSZT8ouJWa/Anthology-III?node-id=4-3428&t=JN4qdlt1xDfI1Af0-4)
 
-**Multi-Node View**
+**Home View View**
 - Display abridged versions of all selected nodes (unlimited capacity)
 - Accommodate any number of selected nodes via scrolling
 - "Click for full text" expansion capability for each node, which opens individual node view.
@@ -303,13 +309,49 @@ testing
 - High contrast mode options
 - Text size adjustments
 
-## Visual Design References
+### Visual Design References
 
 The interface should follow the aesthetic and interaction patterns demonstrated in the Figma designs:
-- **Comment Rail Single View**: [Frame 4-3280](https://www.figma.com/design/3RRAJtxVKX0kbSZT8ouJWa/Anthology-III?node-id=4-3280&t=JN4qdlt1xDfI1Af0-4)
-- **Comment Rail Question View**: [Frame 4-3428](https://www.figma.com/design/3RRAJtxVKX0kbSZT8ouJWa/Anthology-III?node-id=4-3428&t=JN4qdlt1xDfI1Af0-4)
-- **Visual Map Layout**: [Frame 4-3496](https://www.figma.com/design/3RRAJtxVKX0kbSZT8ouJWa/Anthology-III?node-id=4-3496&t=JN4qdlt1xDfI1Af0-4)
-- **Multi-Comment Rail**: [Frame 4-3760](https://www.figma.com/design/3RRAJtxVKX0kbSZT8ouJWa/Anthology-III?node-id=4-3760&t=JN4qdlt1xDfI1Af0-4)
+
+## Comment Rail
+
+- **Home View**: https://www.figma.com/design/3RRAJtxVKX0kbSZT8ouJWa/Anthology-III?node-id=94-17264&m=dev
+
+  -**Question Tile**: https://www.figma.com/design/3RRAJtxVKX0kbSZT8ouJWa/Anthology-III?node-id=94-17536&m=dev
+    - Stack these to display multiple Questions in Home View
+
+
+- **Question View**: https://www.figma.com/design/3RRAJtxVKX0kbSZT8ouJWa/Anthology-III?node-id=94-17360&m=dev
+
+  - **Medley Play Button**: https://www.figma.com/design/3RRAJtxVKX0kbSZT8ouJWa/Anthology-III?node-id=94-17537&m=dev
+    - Display this at the top of the Question View to summarize multiple Responses
+
+  -**Response Tile**: https://www.figma.com/design/3RRAJtxVKX0kbSZT8ouJWa/Anthology-III?node-id=94-17579&t=rUzvQQbCdborDjmH-4
+    - Stack these to display multiple Responses in Question View 
+    
+    -**Response Tile Play Button**: https://www.figma.com/design/3RRAJtxVKX0kbSZT8ouJWa/Anthology-III?node-id=94-17564&m=dev
+      - Always display this above Response text
+
+- **Single View**: https://www.figma.com/design/3RRAJtxVKX0kbSZT8ouJWa/Anthology-III?node-id=94-17452&m=dev
+
+  - **Question Context Text**: https://www.figma.com/design/3RRAJtxVKX0kbSZT8ouJWa/Anthology-III?node-id=94-17597&t=rUzvQQbCdborDjmH-4
+    - Display this above the full Response text in Single View to describe which Question is being responded to
+
+- **Back Button**: https://www.figma.com/design/3RRAJtxVKX0kbSZT8ouJWa/Anthology-III?node-id=94-17555&m=dev
+  - Display this at the top left of the Question View to enable going back to Home View
+  - Display this at the top left of Single View to enable going back to Question View
+
+
+## Visual Map
+
+- **Pull Quote Node**: https://www.figma.com/design/3RRAJtxVKX0kbSZT8ouJWa/Anthology-III?node-id=94-17598&t=rUzvQQbCdborDjmH-4
+
+- **Circle Node**: https://www.figma.com/design/3RRAJtxVKX0kbSZT8ouJWa/Anthology-III?node-id=94-17609&t=rUzvQQbCdborDjmH-4
+
+- **Question Node**: https://www.figma.com/design/3RRAJtxVKX0kbSZT8ouJWa/Anthology-III?node-id=95-17718&t=rUzvQQbCdborDjmH-4
+
+- **Visual Map Layout**: https://www.figma.com/design/3RRAJtxVKX0kbSZT8ouJWa/Anthology-III?node-id=106-463&m=dev
+
 
 ## Future Enhancements (Not in MVP)
 
@@ -434,7 +476,7 @@ Manages complex user interactions:
 #### Performance Optimization Strategies
 
 - **Selective Subscriptions**: Components use selector functions to subscribe only to needed state slices
-- **Memoized Selectors**: Complex derived state (like connected nodes) cached until dependencies change
+- **Memorized Selectors**: Complex derived state (like connected nodes) cached until dependencies change
 - **Shallow Equality Checks**: Prevent unnecessary re-renders with shallow comparison
 - **Batched Updates**: Multiple rapid state changes batched into single update
 - **Lazy State Initialization**: Heavy computations deferred until needed
