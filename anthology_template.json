@@ -1,39 +1,29 @@
 {
-  "_instructions": {
-    "phase_2": [
-      "1. Review speaker turns and identify all questions asked by the facilitator",
-      "2. Create question nodes for each identified question",
-      "3. Map each response to the appropriate question using 'responds_to' field",
-      "4. Mark facilitator turns using the manual_review fields",
-      "5. Combine split responses from the same speaker if needed"
-    ],
-    "phase_3": [
-      "1. Add pull quotes - select 5-15 word impactful statements",
-      "2. Complete conversation metadata (title, date, location, participants)",
-      "3. Add speaker names if known",
-      "4. Review and adjust response boundaries if needed",
-      "5. Remove manual_review fields when complete"
-    ]
-  },
+ 
   "conversations": [
     {
       "conversation_id": "conv_40650ffb",
-      "audio_file": "TODO: Add path to audio file (e.g., ./audio/1635.mp3)",
+      "audio_file": "./recordings/1635.mp3",
       "duration": 2507450,
       "color": "#4A90E2",
       "metadata": {
-        "title": "TODO: Add conversation title",
-        "date": "TODO: Add conversation date (YYYY-MM-DD)",
+        "title": "Real Talk for Change - Boston Community Conversation",
+        "date": "2024-01-01",
         "participants": [
-          "Speaker A",
+          "Speaker A (Facilitator)",
           "Speaker B",
           "Speaker C",
           "Speaker D"
         ],
-        "location": "TODO: Add location",
-        "facilitator": "TODO: Identify facilitator name",
+        "location": "Dorchester Bay, Boston",
+        "facilitator": "Speaker A",
         "topics": [
-          "TODO: Add main topics discussed"
+          "Future of Boston",
+          "Housing affordability and displacement",
+          "Safety and community security",
+          "Public transportation experiences",
+          "Employment and economic concerns",
+          "Community connections and isolation"
         ],
         "source_transcript": "assembly_outputs/1635.transcript.json"
       }
@@ -43,19 +33,145 @@
     {
       "type": "question",
       "id": "q_001",
-      "question_text": "TODO: Add main question (e.g., 'What's your question about the future of Boston?')",
+      "question_text": "What's your question about the future of Boston and your place in it?",
       "related_responses": [
-        "TODO: Add response IDs that answer this question"
+        "r_010",
+        "r_011"
       ],
-      "facilitator": "TODO: Add facilitator name",
-      "notes": "Review speaker turns to identify actual questions asked"
+      "facilitator": "Speaker A",
+      "notes": "Main opening question to gather participants' concerns about Boston's future"
+    },
+    {
+      "type": "question",
+      "id": "q_002",
+      "question_text": "Do you have a particular story or experience that brings you to ask that now?",
+      "related_responses": [
+        "r_013",
+        "r_014",
+        "r_018",
+        "r_019",
+        "r_020",
+        "r_021",
+        "r_022",
+        "r_023",
+        "r_025",
+        "r_026",
+        "r_027",
+        "r_028"
+      ],
+      "facilitator": "Speaker A",
+      "notes": "Follow-up to get personal experiences behind employment concerns"
+    },
+    {
+      "type": "question",
+      "id": "q_003",
+      "question_text": "How would you put your question about the future of Boston?",
+      "related_responses": [
+        "r_016"
+      ],
+      "facilitator": "Speaker A",
+      "notes": "Prompting participant to articulate their question clearly"
+    },
+    {
+      "type": "question",
+      "id": "q_004",
+      "question_text": "Do you have a particular experience on the bus?",
+      "related_responses": [
+        "r_030"
+      ],
+      "facilitator": "Speaker A",
+      "notes": "Follow-up about safety experiences on public transportation"
+    },
+    {
+      "type": "question",
+      "id": "q_005",
+      "question_text": "Have you had experiences like that?",
+      "related_responses": [
+        "r_032",
+        "r_033",
+        "r_034",
+        "r_036",
+        "r_037",
+        "r_038",
+        "r_039",
+        "r_040",
+        "r_041",
+        "r_042",
+        "r_043",
+        "r_044",
+        "r_045",
+        "r_046",
+        "r_047"
+      ],
+      "facilitator": "Speaker A",
+      "notes": "Follow-up about safety concerns for children"
+    },
+    {
+      "type": "question",
+      "id": "q_006",
+      "question_text": "Are there other things that you're hearing from each other that kind of resonate with you or sound familiar?",
+      "related_responses": [
+        "r_049",
+        "r_051",
+        "r_052",
+        "r_053",
+        "r_054",
+        "r_055"
+      ],
+      "facilitator": "Speaker A",
+      "notes": "Encouraging cross-conversation and finding common themes"
+    },
+    {
+      "type": "question",
+      "id": "q_007",
+      "question_text": "Is there anything else that you heard that reminds you of something that happened to you?",
+      "related_responses": [
+        "r_057",
+        "r_058"
+      ],
+      "facilitator": "Speaker A",
+      "notes": "Drawing out more personal connections to shared themes"
+    },
+    {
+      "type": "question",
+      "id": "q_008",
+      "question_text": "Is there anything else you want to share?",
+      "related_responses": [
+        "r_060",
+        "r_061",
+        "r_062",
+        "r_063",
+        "r_064",
+        "r_065",
+        "r_066",
+        "r_067",
+        "r_068",
+        "r_069",
+        "r_070",
+        "r_071",
+        "r_072",
+        "r_073",
+        "r_074",
+        "r_076",
+        "r_078",
+        "r_079",
+        "r_080",
+        "r_081",
+        "r_083",
+        "r_085",
+        "r_087",
+        "r_089",
+        "r_091"
+      ],
+      "facilitator": "Speaker A",
+      "notes": "Closing question to capture any remaining thoughts"
     }
   ],
   "responses": [
     {
       "type": "response",
       "id": "r_001",
-      "responds_to": "TODO: Add question ID this responds to (e.g., q_001)",
+      "responds_to": null,
       "speaker_name": "Speaker A",
       "speaker_text": "Okay, well, let's start at 6:22. Well, welcome. I'm glad you could come. This, this conversation is called Real Talk for Change. And we invited you to think about the pressing questions that you face and we all face, but really you face here in Boston. So our goal today is look at those questions and add your experience to probably now 300 other people who've had little conversations like this. We actually had 12 of these at Dorchester Bay. Elias was one of them. So I'm going to begin recording and I want to share a little information about why we're doing this. We're trying to create a new dialogue across the whole city of Boston so people can really listen to each other. A lot of times people don't listen as well as they talk, so we're going to mostly listen and also we want to have a different type of conversation. We're not going to ask you to make a speech or just tell us all the things that are wrong, but ask a question and tell us your personal lived experience. Your experience, not someone else or not we all or not what everybody thinks, but your personal experience, not, you know, what's your position on housing or this issue, but your experience. And we're doing this because I think when we talk about our personal experience, it builds more of a connection. And also when people in authority, whether they're in, whether it's the mayor or the governor or the head of a hospital, I think they're more likely to listen if they actually hear your voice. As opposed to. It's more personal. Yeah. You know, as opposed to reading something, they actually hear your voice because there's more emotion in our voice and my voice and your voice than there is just when you read something. So we're going to record this conversation and I just want to let you know what's going to happen. It, it's just an audio recording, no video obviously. And it's going to be part of this Real Talk for Change conversation. I don't know if you've seen the website. We have a website called Real Talk for Change dot org. Have you seen it, Kate? Yeah. Okay, cool. So it's hosted on this thing called lvn, which stands for Local Voices Network. And that's a web based tool that's used all over the country and they have a nonprofit that's called Cortico, I don't know what the name means. And there's a way in which after it's recorded, the system uploads certain key phrases, things you say and you can hear on the website, what people are actually saying. So this conversation, along with all the other conversations that have taken place and will take place, you know, from East Boston to Dorchester, Roxbury, all over the place, Hyde park, will be shared with others so you can hear what others are saying. Right now. You can go to realtalkforchange.org and listen to different conversations and hear real people, including some people from Dorchester Bay. So I've got to read the statement to ask you if you're willing to be recorded. Okay. It's more personal. Yeah. You know, as opposed to reading something, they actually hear your voice because there's more emotion in our voice and my voice and your voice than there is just when you read something. So we're going to record this conversation and I just want to let you know what's going to happen. It, it's just an audio recording, no video obviously. And it's going to be part of this Real Talk for Change conversation. I don't know if you've seen the website. We have a website called Real Talk for Change dot org. Have you seen it, Kate? Yeah. Okay, cool. So it's hosted on this thing called lvn, which stands for Local Voices Network. And that's a web based tool that's used all over the country and they have a nonprofit that's called Cortico, I don't know what the name means. And there's a way in which after it's recorded, the system uploads certain key phrases, things you say and you can hear on the website, what people are actually saying. So this conversation, along with all the other conversations that have taken place and will take place, you know, from East Boston to Dorchester, Roxbury, all over the place, Hyde park, will be shared with others so you can hear what others are saying. Right now. You can go to realtalkforchange.org and listen to different conversations and hear real people, including some people from Dorchester Bay. So I've got to read the statement to ask you if you're willing to be recorded. Okay. Okay. So as a participant in this conversation, you are providing consent to Real Talk for change to use and retain the recording in accordance with its mission. You also understand that the conversation will be part of a protected collection on Cortico's Local Voices network, whose mission is to foster conversations in communities and in the media that improve our understanding of one another. Cortico will collect, retain and analyze these conversations in keeping with that mission. In addition, part of Real Talk's mission is to prevent present voices from the people of Boston. There, boy. Therefore, portions of your conversation can be made public. So if you understand and agree to this, just go around and say your name, and you can use a pseudonym, you know, a fake name if you want, and just say, my name is, you know, Sean. I agree.",
       "pull_quote": null,
@@ -6649,7 +6765,7 @@
     {
       "type": "response",
       "id": "r_002",
-      "responds_to": "TODO: Add question ID this responds to (e.g., q_001)",
+      "responds_to": "r_001",
       "speaker_name": "Speaker D",
       "speaker_text": "And my name is Alda. I do agree with this.",
       "pull_quote": null,
@@ -6740,7 +6856,7 @@
     {
       "type": "response",
       "id": "r_003",
-      "responds_to": "TODO: Add question ID this responds to (e.g., q_001)",
+      "responds_to": "r_002",
       "speaker_name": "Speaker A",
       "speaker_text": "Okay, great. Thanks. Well, one of the things I want you to do is speak for yourself. You know, not what someone else says. Speak from your own experience and allow other people to speak for them and share the time. Luckily, we don't have a huge group, so you'll have plenty of time. Stay curious, ask honest questions. Take time for reflection. Somebody says something, listen generously, assume good intentions, even recognizing that the impact that someone says can be not what they intended. And if you can, you know, unless it's an emergency, close your phone and all that kind of stuff so we don't have phone ringing so we can pay attention. Is that okay? Yeah, I mean, there's always a lot. Okay, so let's start. I mean, I know you know each other from the leadership, but just say your name and just say one quick word of how you're feeling, either physically, physically, or intellectually or emotionally, how you're feeling or spiritually. Just, you know, my name is Michelle. Yeah, I mean, there's always a lot. Okay, so let's start. I mean, I know you know each other from the leadership, but just say your name and just say one quick word of how you're feeling, either physically, physically, or intellectually or emotionally, how you're feeling or spiritually. Just, you know, my name is Michelle. I'm just bored. Okay. I don't know if that's intellectually or emotionally. Yeah, I mean, there's always a lot. Okay, so let's start. I mean, I know you know each other from the leadership, but just say your name and just say one quick word of how you're feeling, either physically, physically, or intellectually or emotionally, how you're feeling or spiritually. Just, you know, my name is Michelle. I'm just bored. Okay. I don't know if that's intellectually or emotionally. I was being honest. No, that's okay. Be Honest. That's the point.",
       "pull_quote": null,
@@ -9015,7 +9131,7 @@
     {
       "type": "response",
       "id": "r_004",
-      "responds_to": "TODO: Add question ID this responds to (e.g., q_001)",
+      "responds_to": "r_003",
       "speaker_name": "Speaker C",
       "speaker_text": "So my name is K. And I'm feeling a little stressfully because my daughter, she had a baby she doesn't have. I don't know if that's. Thank you. She happened, I don't know. Know some kind of, like. It's like, I don't want to hold the baby. You take the baby. And this one, like, I didn't have a baby.",
       "pull_quote": null,
@@ -9456,7 +9572,7 @@
     {
       "type": "response",
       "id": "r_005",
-      "responds_to": "TODO: Add question ID this responds to (e.g., q_001)",
+      "responds_to": "r_004",
       "speaker_name": "Speaker B",
       "speaker_text": "She suffering from postpartum depression? Maybe. I'm. I don't know. But that's very, very common with young mothers.",
       "pull_quote": null,
@@ -9603,7 +9719,7 @@
     {
       "type": "response",
       "id": "r_006",
-      "responds_to": "TODO: Add question ID this responds to (e.g., q_001)",
+      "responds_to": "r_004",
       "speaker_name": "Speaker A",
       "speaker_text": "Yeah. Well, thanks for, you know, bringing this. Real, you know. Sorry. So that's my day. How do you feel about it? Why don't we let Alda check in? Is that okay? So that's my day. How do you feel about it? Why don't we let Alda check in? Is that okay? Yep. Okay, then we can go back to that. So that's my day. How do you feel about it? Why don't we let Alda check in? Is that okay? Yep. Okay, then we can go back to that. And my name is Ald. I feel great. And my name is Michael. And I'm feeling. I'm feeling grateful just to be here and be with you and. Yeah. And grateful I have friends like Elias and that you're willing to do this. Okay, so let's think about. What I'd like you to think about, you know, as we're here today, is what's your question about the future of Boston and your place in that future? And you can just take, you know, a couple minutes to think about. What's your question? You know, question starts with what, where, how, why, when, how, et cetera. You know, just take a couple of minutes. What's your question about the future of Boston and your place in that. And then, you know, just. We got time to think about this and then reflect on what experience in your life, what story, personal experience, led you to that question? You know what I mean?",
       "pull_quote": null,
@@ -11381,7 +11497,7 @@
     {
       "type": "response",
       "id": "r_007",
-      "responds_to": "TODO: Add question ID this responds to (e.g., q_001)",
+      "responds_to": "r_006",
       "speaker_name": "Speaker A",
       "speaker_text": "Well, let's. Why don't you take a minute just to kind of.",
       "pull_quote": null,
@@ -11486,7 +11602,7 @@
     {
       "type": "response",
       "id": "r_008",
-      "responds_to": "TODO: Add question ID this responds to (e.g., q_001)",
+      "responds_to": "r_007",
       "speaker_name": "Speaker B",
       "speaker_text": "I mean, that's the only thing that's bugging me, so that's the only question I would have, because that's the only thing that is different for me.",
       "pull_quote": null,
@@ -11696,7 +11812,7 @@
     {
       "type": "response",
       "id": "r_009",
-      "responds_to": "TODO: Add question ID this responds to (e.g., q_001)",
+      "responds_to": null,
       "speaker_name": "Speaker A",
       "speaker_text": "What's your question about the future of Boston and your place in it?",
       "pull_quote": null,
@@ -11808,10 +11924,10 @@
     {
       "type": "response",
       "id": "r_010",
-      "responds_to": "TODO: Add question ID this responds to (e.g., q_001)",
+      "responds_to": "q_001",
       "speaker_name": "Speaker B",
       "speaker_text": "The way the job market is right now, it's just so weird to even know where you fit anymore, basically. So I'm trying to figure out where I fit. Where do I fit? Yes. Does that make sense? Where do I fit? Yes. Does that make sense? Yeah. Yeah, for sure. What type of work do you like to do? I don't. I can do customer service. I can do. I don't want to do retail anymore. I really am sick of working with food, you know, stuff like that. Because people are just so rude right now. I don't know what it is, but it seems like this world is. Is angry and people just taking it out on everyone, especially when you work in that type of field. And I just don't want to be in it. So many people are getting hurt, not just their feelings, but physically hurt, because.",
-      "pull_quote": null,
+      "pull_quote": "Where do I fit in the world of employment in Boston?",
       "audio_start": 536170,
       "audio_end": 575420,
       "conversation_id": "conv_40650ffb",
@@ -12900,7 +13016,7 @@
     {
       "type": "response",
       "id": "r_011",
-      "responds_to": "TODO: Add question ID this responds to (e.g., q_001)",
+      "responds_to": "q_001",
       "speaker_name": "Speaker B",
       "speaker_text": "I know you mentioned I've had people know because I'm kind of outspoken. So when people step up to me, I know how to step back, you know, so I kind of get them away from me before they can get to that point. So I rarely have had that. But because I'm small, a lot of times they think they can. Until I open my mouth, they expect me not to protect myself. But you have to. You have to. Some of the strongest women I know are smaller than I am. So, yes, I have to.",
       "pull_quote": null,
@@ -13607,7 +13723,7 @@
     {
       "type": "response",
       "id": "r_012",
-      "responds_to": "TODO: Add question ID this responds to (e.g., q_001)",
+      "responds_to": "r_010",
       "speaker_name": "Speaker A",
       "speaker_text": "So your experience about what's the future for you and employment comes from. Yeah. Where do I fit? Do you have a particular story or experience that brings you to ask that now?",
       "pull_quote": null,
@@ -13859,7 +13975,7 @@
     {
       "type": "response",
       "id": "r_013",
-      "responds_to": "TODO: Add question ID this responds to (e.g., q_001)",
+      "responds_to": "q_002",
       "speaker_name": "Speaker B",
       "speaker_text": "No, it's just that I'm 60 years old and I don't know where my next chapter is in the work, in the work field. So to me that's important because that's what I'm going to be doing. So I haven't figured it out.",
       "pull_quote": null,
@@ -14181,7 +14297,7 @@
     {
       "type": "response",
       "id": "r_014",
-      "responds_to": "TODO: Add question ID this responds to (e.g., q_001)",
+      "responds_to": "q_002",
       "speaker_name": "Speaker C",
       "speaker_text": "And for me, it's housing, like, for the future. I'm hoping they make more one bedrooms for single people that would like to live alone, like myself. Yeah. And make it affordable, you know, that's my future. And my thoughts right now are like, I'm looking. I'm either always making too much money for the one bedroom or receiving into the building and stuff like that. So that, I mean, I'm looking for the future to change that. Definitely for the future.",
       "pull_quote": null,
@@ -14776,7 +14892,7 @@
     {
       "type": "response",
       "id": "r_015",
-      "responds_to": "TODO: Add question ID this responds to (e.g., q_001)",
+      "responds_to": "r_014",
       "speaker_name": "Speaker A",
       "speaker_text": "So your question is, how would you put your question about the future of Boston?",
       "pull_quote": null,
@@ -14902,7 +15018,7 @@
     {
       "type": "response",
       "id": "r_016",
-      "responds_to": "TODO: Add question ID this responds to (e.g., q_001)",
+      "responds_to": "q_003",
       "speaker_name": "Speaker C",
       "speaker_text": "To make more affordable housing, especially for single people, like one bedrooms, like, and I never want to move into that, but they're like, oh, that's all we have. Plus, you make too much money for one bedroom. I'm not understanding why I make too much money for one bedroom and I'm just one person. But he didn't. I don't know. But that's my story. And in the future, I hope, you know, they start to think about stuff like that. Like, we have single people that works hard and we like to just live alone in some kind of affordable housing. And we do need rent control. That's the future here. We really do need rent control. We need a lot of rent control for Everyone, everywhere to prevent homelessness.",
       "pull_quote": null,
@@ -15840,7 +15956,7 @@
     {
       "type": "response",
       "id": "r_017",
-      "responds_to": "TODO: Add question ID this responds to (e.g., q_001)",
+      "responds_to": "r_016",
       "speaker_name": "Speaker A",
       "speaker_text": "And do you have a personal experience that leads you to ask right now?",
       "pull_quote": null,
@@ -15959,10 +16075,10 @@
     {
       "type": "response",
       "id": "r_018",
-      "responds_to": "TODO: Add question ID this responds to (e.g., q_001)",
+      "responds_to": "q_002",
       "speaker_name": "Speaker C",
       "speaker_text": "I have a personal experience where I want a one bedroom. You know, I went to this office talking to these people like I just want one bedroom. I have a job, I don't see why I can't move into a one bedroom. And they're like, oh well, it's levels and it's income levels that they face. So I can't just add my income going to a one bedroom. I will only be eligible for a two bedroom. But it's just me. I'm on two bedroom for. They're trying to force you to have a roommate or something. I don't know. I don't know. I don't want roommates. Me right now I'm in a two bedroom, but I rather be in a single one bedroom by myself. You know, like I turned 40, it was like I started getting into the alone zone and that's kind of where I want to be. Like if I want to be bothered, I'll come outside. Otherwise leave me alone. Yeah, I'm just, I'm just surprised. Everywhere I fill out application and it's like over your income, you'll have to get it too. I don't want no two bedrooms. Why can't I just have a one bedroom? It's just me. They're trying to force you to have a roommate or something. I don't know. I don't know. I don't want roommates. Me right now I'm in a two bedroom, but I rather be in a single one bedroom by myself. You know, like I turned 40, it was like I started getting into the alone zone and that's kind of where I want to be. Like if I want to be bothered, I'll come outside. Otherwise leave me alone. Yeah, I'm just, I'm just surprised. Everywhere I fill out application and it's like over your income, you'll have to get it too. I don't want no two bedrooms. Why can't I just have a one bedroom? It's just me. But I don't know how that works out. But that's just. I hope the future changes that. I mean people, single people should be able to have low income apartments or something like that.",
-      "pull_quote": null,
+      "pull_quote": "They were trying to raise the rent from $850 to almost $1300 a month",
       "audio_start": 746980,
       "audio_end": 834580,
       "conversation_id": "conv_40650ffb",
@@ -18493,7 +18609,7 @@
     {
       "type": "response",
       "id": "r_019",
-      "responds_to": "TODO: Add question ID this responds to (e.g., q_001)",
+      "responds_to": "q_002",
       "speaker_name": "Speaker B",
       "speaker_text": "They were trying to raise the rent here. Making me spend $1300 a month, almost $1300 a month from 850 to up there. And I lost my job like right around the same time. So they kind of stopped them. But yeah, I hear you. How many people you know can do a one bedroom for thirteen hundred dollars? You know, for real? It's crazy. And it's not the best neighborhood. So it's not like, you know, I.",
       "pull_quote": null,
@@ -19060,7 +19176,7 @@
     {
       "type": "response",
       "id": "r_020",
-      "responds_to": "TODO: Add question ID this responds to (e.g., q_001)",
+      "responds_to": "q_002",
       "speaker_name": "Speaker C",
       "speaker_text": "Can'T even like I'm, I'm sleep because I get up at 5 and then that's in here. Like boom, boom, boom. I'm like, who's outside? Party. It's okay, you can party. But why I gotta wait for. I can't even sleep. It's like, who do you call? Nobody. Because that security company never answers. And it takes like about, almost a whole year to get Jamila on the phone.",
       "pull_quote": null,
@@ -19564,7 +19680,7 @@
     {
       "type": "response",
       "id": "r_021",
-      "responds_to": "TODO: Add question ID this responds to (e.g., q_001)",
+      "responds_to": "q_002",
       "speaker_name": "Speaker B",
       "speaker_text": "So the last meeting we had, she said that they were trying to hire new security and they were going through three different companies that they were trying to decide from. So we don't have no security over here right now, just so you know.",
       "pull_quote": null,
@@ -19900,7 +20016,7 @@
     {
       "type": "response",
       "id": "r_022",
-      "responds_to": "TODO: Add question ID this responds to (e.g., q_001)",
+      "responds_to": "q_002",
       "speaker_name": "Speaker C",
       "speaker_text": "And that's so funny, cuz never came anyways. Yeah, I'm not even hearing all that music no more.",
       "pull_quote": null,
@@ -20047,7 +20163,7 @@
     {
       "type": "response",
       "id": "r_023",
-      "responds_to": "TODO: Add question ID this responds to (e.g., q_001)",
+      "responds_to": "q_002",
       "speaker_name": "Speaker B",
       "speaker_text": "Well, yeah, it slowed down, but it was. It was bad up. Up until I think August. Yes. But yeah, cuz they right behind the building where all the bedrooms are. Yes. But yeah, cuz they right behind the building where all the bedrooms are. Yeah. Which makes no sense. Yeah, yeah. And then they took that white picket fence and they took that down, put that wire fence up so they can't hide over there because they were charging people money to go over there. Girls would be dressing up and acting like they were going to a party. My living room's right across from it. So I'm like, what in the world? Yes. But yeah, cuz they right behind the building where all the bedrooms are. Yeah. Which makes no sense. Yeah, yeah. And then they took that white picket fence and they took that down, put that wire fence up so they can't hide over there because they were charging people money to go over there. Girls would be dressing up and acting like they were going to a party. My living room's right across from it. So I'm like, what in the world? The music looks glass. I'll be talking on the phone and people be like, are you at a party? No, I'm in my house.",
       "pull_quote": null,
@@ -21615,7 +21731,7 @@
     {
       "type": "response",
       "id": "r_024",
-      "responds_to": "TODO: Add question ID this responds to (e.g., q_001)",
+      "responds_to": "r_023",
       "speaker_name": "Speaker A",
       "speaker_text": "No. Did you want to say. Are you want to say something else, Kate, about the other experience? Okay, we'll come back.",
       "pull_quote": null,
@@ -21790,7 +21906,7 @@
     {
       "type": "response",
       "id": "r_025",
-      "responds_to": "TODO: Add question ID this responds to (e.g., q_001)",
+      "responds_to": "q_002",
       "speaker_name": "Speaker D",
       "speaker_text": "For me, I would say my question is when we will feel safe in Boston? And the reason that is my question is because as a mother of two daughters and seeing all this guns, violence and missing kids around Boston, it makes me concerned. And my experience, like real experience has been like every day when my oldest daughter goes to school and the time that she returns, I feel like something's going to happen. I feel panic all the time. I have to be constant, like calling to see where she's at the moment, if she's on the bus, if she's walking. And now that is like kind of dark. It makes me feel like much more concerned and worried. She's 16. I still being like sometimes in the morning I have to bring her to the bus stop, like stay there, seeing that she's taking the public transportation. But on the time that she returns back, sometimes I'm at the work. I do not have that ass to. To be there, you know? And it makes me feel like we are not safe in here. And it's something that I question about it. When can we feel like peaceful, like they can walk in the street. Nothing's gonna happen. No one is gonna just take your kid. Oh no. No one is gonna get hurt because that's everywhere that you go around Boston specifically and Dorchester, you feel like it's not safe, you know? And that's my question. When we will feel safe in Boston? I want to see myself in the future, like because when I came here that Boston was my first place, especially Dorchester, because there's a community, Cape Verde community is in Dorchester. And it seen Dorchester as my room since I came, you know, And I would like to see and feel safe here and keep my kids here around Boston.",
       "pull_quote": null,
@@ -24044,7 +24160,7 @@
     {
       "type": "response",
       "id": "r_026",
-      "responds_to": "TODO: Add question ID this responds to (e.g., q_001)",
+      "responds_to": "q_002",
       "speaker_name": "Speaker C",
       "speaker_text": "You know, good example. Because I feel your daughter has to go to the bus stop and you have to worry and she could be waiting for the bus and these fools start shooting and then something happens. Things happen on the bus too. Yeah.",
       "pull_quote": null,
@@ -24380,7 +24496,7 @@
     {
       "type": "response",
       "id": "r_027",
-      "responds_to": "TODO: Add question ID this responds to (e.g., q_001)",
+      "responds_to": "q_002",
       "speaker_name": "Speaker B",
       "speaker_text": "You know, I stopped working September 13th. I haven't been back on the bus.",
       "pull_quote": null,
@@ -24499,7 +24615,7 @@
     {
       "type": "response",
       "id": "r_028",
-      "responds_to": "TODO: Add question ID this responds to (e.g., q_001)",
+      "responds_to": "q_002",
       "speaker_name": "Speaker B",
       "speaker_text": "I was walking to work because I was. I wasn't comfortable on the buses. So I understand what you're saying. Especially depending on what area you're in. Like when you go up by the Boston Medical center, some of the people that get on up around there, they. It be very.",
       "pull_quote": null,
@@ -24877,7 +24993,7 @@
     {
       "type": "response",
       "id": "r_029",
-      "responds_to": "TODO: Add question ID this responds to (e.g., q_001)",
+      "responds_to": "r_028",
       "speaker_name": "Speaker A",
       "speaker_text": "Do you have a particular experience on the bus? Oh, my God. So many times. What happened?",
       "pull_quote": null,
@@ -25017,10 +25133,10 @@
     {
       "type": "response",
       "id": "r_030",
-      "responds_to": "TODO: Add question ID this responds to (e.g., q_001)",
+      "responds_to": "q_004",
       "speaker_name": "Speaker B",
       "speaker_text": "Men will either try to speak to you and if you say, I'm not interested, they stop disrespecting you and calling you all kinds of names and getting loud and you biracial b. And then, you know, I mean, I don't even know you. You know, I don't understand this. I can't believe that. So don't. And my boyfriend asked me, how come you wear wedding rings? And I said, because it's easier to say I gotta go home to my man. Then, oh, I'm not interested. I said, they don't. They're not as rude. And I'm 60 years old. You would think I wouldn't have to deal with that anymore. But this all women, we still dealing with it no matter what age we are. I can't believe that. So don't. And my boyfriend asked me, how come you wear wedding rings? And I said, because it's easier to say I gotta go home to my man. Then, oh, I'm not interested. I said, they don't. They're not as rude. And I'm 60 years old. You would think I wouldn't have to deal with that anymore. But this all women, we still dealing with it no matter what age we are. And it's. It's funny and it's sad at the same time. It's a compliment, but then again, it's not, you know, because a lot of women don't get noticed. But I don't want to get noticed because you think I'm cute. You know, what about this. Can you have a conversation right.",
-      "pull_quote": null,
+      "pull_quote": "Nobody cares that you're afraid. Nobody cares.",
       "audio_start": 1164410,
       "audio_end": 1212780,
       "conversation_id": "conv_40650ffb",
@@ -26816,7 +26932,7 @@
     {
       "type": "response",
       "id": "r_031",
-      "responds_to": "TODO: Add question ID this responds to (e.g., q_001)",
+      "responds_to": "r_030",
       "speaker_name": "Speaker A",
       "speaker_text": "Yeah, right here? Have you had experiences like that? I mean, you're talking about safety for you. One daughter is 16 and.",
       "pull_quote": null,
@@ -26991,7 +27107,7 @@
     {
       "type": "response",
       "id": "r_032",
-      "responds_to": "TODO: Add question ID this responds to (e.g., q_001)",
+      "responds_to": "q_005",
       "speaker_name": "Speaker C",
       "speaker_text": "Well, my experience with that. Well, my kids was they was going to the Burke High School, but they would fight every day. Every day. And nobody go break up the fight. What are you fighting for? Nobody knows why they're fighting because this one said he shaves you. But now it's a little worse. Like, I feel her situation because back then I was just driving them to school and picking them up because I didn't want to deal with fighting in the middle of the streets and stuff like that. But now it's worse because then when my kids was more respectful to the adults, like I said, stop it. Break it up. Everybody go home. That's fine. Now I can get shot.",
       "pull_quote": null,
@@ -27887,7 +28003,7 @@
     {
       "type": "response",
       "id": "r_033",
-      "responds_to": "TODO: Add question ID this responds to (e.g., q_001)",
+      "responds_to": "q_005",
       "speaker_name": "Speaker C",
       "speaker_text": "So it's a big difference. My son is 33. He's 33. And yeah, it was respectful then. But as my daughter, now she's 20, and when she was going to school, you know, I would be like, just get in a car. Just get in the car. I didn't say nothing to nobody's kid because I'm not good at being disrespected. So now, like, I hear the kids talk to the teachers. Oh, my goodness. I couldn't be a teacher. So I understand what she's saying. Like the. We need a. A big jump in the future in the school system. A big jump? What do you mean? Yeah, like, big jump. Because my granddaughter, she's only nine years old, she fights every day because she doesn't have what other kids have. Now some people raise their kids, like you have to have jury on. You have to have brand name sneakers. This, that, that. My daughter's not doing all that. So they feels like she's a little bum. So they want to pick with her. And then it's a fight. A big jump? What do you mean? Yeah, like, big jump. Because my granddaughter, she's only nine years old, she fights every day because she doesn't have what other kids have. Now some people raise their kids, like you have to have jury on. You have to have brand name sneakers. This, that, that. My daughter's not doing all that. So they feels like she's a little bum. So they want to pick with her. And then it's a fight. They're bullying her. Yeah. They need to change the future. A big jump? What do you mean? Yeah, like, big jump. Because my granddaughter, she's only nine years old, she fights every day because she doesn't have what other kids have. Now some people raise their kids, like you have to have jury on. You have to have brand name sneakers. This, that, that. My daughter's not doing all that. So they feels like she's a little bum. So they want to pick with her. And then it's a fight. They're bullying her. Yeah. They need to change the future. And she's just nine years old. Yeah. And she's. Where is she? At Orchard Gardens. Oh, at Orchard Garden School.",
       "pull_quote": null,
@@ -30575,7 +30691,7 @@
     {
       "type": "response",
       "id": "r_034",
-      "responds_to": "TODO: Add question ID this responds to (e.g., q_001)",
+      "responds_to": "q_005",
       "speaker_name": "Speaker D",
       "speaker_text": "For me right now in the school, what I see the most is, I don't know if it's the reason is all the kids were like, like remotely learning remotely at home with all this, the COVID pandemic, being home, and they're going back to school with all this and getting like, violent because there's a lot of fights and probably there's a mental issue with the big kids. There have been like, violent school even with the teachers. We had, like, recently school. That principal was beat up by a student. I think all this is something that they have to look at up right now because, yeah, we have to see some improvement on these cases at school.",
       "pull_quote": null,
@@ -31436,7 +31552,7 @@
     {
       "type": "response",
       "id": "r_035",
-      "responds_to": "TODO: Add question ID this responds to (e.g., q_001)",
+      "responds_to": "r_034",
       "speaker_name": "Speaker A",
       "speaker_text": "And have your daughters had any experience that particularly that leads you to not.",
       "pull_quote": null,
@@ -31555,7 +31671,7 @@
     {
       "type": "response",
       "id": "r_036",
-      "responds_to": "TODO: Add question ID this responds to (e.g., q_001)",
+      "responds_to": "q_005",
       "speaker_name": "Speaker D",
       "speaker_text": "Have Them recently in high school, I think one kid just bought the soft gum gun. I don't know what is that? Because it's. I don't know what is that? I never saw. What is soft gun.",
       "pull_quote": null,
@@ -31835,7 +31951,7 @@
     {
       "type": "response",
       "id": "r_037",
-      "responds_to": "TODO: Add question ID this responds to (e.g., q_001)",
+      "responds_to": "q_005",
       "speaker_name": "Speaker B",
       "speaker_text": "Soft gun. It's a gun that they can put together with pot. So it's. They can't. They can't identify it. So if you use could. It's like a ghost gun. It's like a ghost gun. Yeah.",
       "pull_quote": null,
@@ -32108,7 +32224,7 @@
     {
       "type": "response",
       "id": "r_038",
-      "responds_to": "TODO: Add question ID this responds to (e.g., q_001)",
+      "responds_to": "q_005",
       "speaker_name": "Speaker D",
       "speaker_text": "Something I know the school's been like, investigating about it.",
       "pull_quote": null,
@@ -32199,7 +32315,7 @@
     {
       "type": "response",
       "id": "r_039",
-      "responds_to": "TODO: Add question ID this responds to (e.g., q_001)",
+      "responds_to": "q_005",
       "speaker_name": "Speaker B",
       "speaker_text": "Yeah. These kids are so smart today. They order stuff off the Internet and they can do things that we couldn't even think about.",
       "pull_quote": null,
@@ -32388,10 +32504,10 @@
     {
       "type": "response",
       "id": "r_040",
-      "responds_to": "TODO: Add question ID this responds to (e.g., q_001)",
+      "responds_to": "q_005",
       "speaker_name": "Speaker D",
       "speaker_text": "And there's something like kind of worried. I was worried about it. And we have the meeting that they did expanded the kid already being like suspended. And also there is an investigation about it. But it's not just her school. It's been a lot of school studies. If you look at the news is a lot of schools that being with a lot of concerns and problem with students being fighting. Bring arms to the school.",
-      "pull_quote": null,
+      "pull_quote": "Why would we call them if they're known for killing people of color?",
       "audio_start": 1470390,
       "audio_end": 1505850,
       "conversation_id": "conv_40650ffb",
@@ -32948,7 +33064,7 @@
     {
       "type": "response",
       "id": "r_041",
-      "responds_to": "TODO: Add question ID this responds to (e.g., q_001)",
+      "responds_to": "q_005",
       "speaker_name": "Speaker C",
       "speaker_text": "You know, so when my kids was growing up, it started out. It started starting like, I'm from Humboldt, I'm from Blue Hill, I'm from Castlegate. I tell my kids, we're not from nowhere, but it started from there. So now it had built up to the point where we got the different gang of kids going to school and through the courts, you know, we. We lost respect from our kids. Because if I go to the school and smack the heck out of my kid, the teachers are mad at me, but how am I supposed to get control of the kid? Because the kid is being disrespectful to you, me, himself. It's crazy. So really, that's when I say we take a big jump. Because when it's my kids, I can go into school and say, what did you do? No, Mommy, Mommy, I'm sorry, I'm sorry, Ms. Brown. I'm sorry. I'm sorry. But now they cuss the parent out, the teacher out, the principal Fu. That's crazy.",
       "pull_quote": null,
@@ -34166,7 +34282,7 @@
     {
       "type": "response",
       "id": "r_042",
-      "responds_to": "TODO: Add question ID this responds to (e.g., q_001)",
+      "responds_to": "q_005",
       "speaker_name": "Speaker D",
       "speaker_text": "Yes, one of the school that she does. Wow. In High Park.",
       "pull_quote": null,
@@ -34271,7 +34387,7 @@
     {
       "type": "response",
       "id": "r_043",
-      "responds_to": "TODO: Add question ID this responds to (e.g., q_001)",
+      "responds_to": "q_005",
       "speaker_name": "Speaker B",
       "speaker_text": "Oh, yeah. And it was recently. I think a lot of these kids that were stuck home was stuck home with abusive people in the house. And now when they're coming back to.",
       "pull_quote": null,
@@ -34523,7 +34639,7 @@
     {
       "type": "response",
       "id": "r_044",
-      "responds_to": "TODO: Add question ID this responds to (e.g., q_001)",
+      "responds_to": "q_005",
       "speaker_name": "Speaker B",
       "speaker_text": "The fighting is coming up because they spent over a year locked in with abusive people. You know, I mean, if you got a brother and sister that's beating your ass Every day. And you can't do nothing about it because you live in that house. I mean, my. My relatives. Oh, my God. I don't speak to any of them for a good reason. But if I had to, I would understand how these kids feel. I'd be angry, too. I'd be fighting. I'd be something. Because it's not. It's not natural. But a lot of these kids are being abused. Terrible. At home by their own siblings.",
       "pull_quote": null,
@@ -35307,7 +35423,7 @@
     {
       "type": "response",
       "id": "r_045",
-      "responds_to": "TODO: Add question ID this responds to (e.g., q_001)",
+      "responds_to": "q_005",
       "speaker_name": "Speaker D",
       "speaker_text": "I think so. It may be one of the house.",
       "pull_quote": null,
@@ -35398,7 +35514,7 @@
     {
       "type": "response",
       "id": "r_046",
-      "responds_to": "TODO: Add question ID this responds to (e.g., q_001)",
+      "responds_to": "q_005",
       "speaker_name": "Speaker C",
       "speaker_text": "I have four kids, and my son is the oldest, but he just watched TV for girls. They will fight each other. I said, okay, that's what y' all want to do. Spank, spank, spank, spank. I make everybody feel, this is not what we're doing. But if you're just whooping spank, spank one and let the other one get away, then, yeah, you do have a house of drama.",
       "pull_quote": null,
@@ -35909,7 +36025,7 @@
     {
       "type": "response",
       "id": "r_047",
-      "responds_to": "TODO: Add question ID this responds to (e.g., q_001)",
+      "responds_to": "q_005",
       "speaker_name": "Speaker B",
       "speaker_text": "My brothers are eight years apart. My mother had three kids in four years. So me, my sister and brother, we were like. So I'm the middle child out of them. Oldest daughter.",
       "pull_quote": null,
@@ -36161,7 +36277,7 @@
     {
       "type": "response",
       "id": "r_048",
-      "responds_to": "TODO: Add question ID this responds to (e.g., q_001)",
+      "responds_to": "r_047",
       "speaker_name": "Speaker A",
       "speaker_text": "Are there other things that you're hearing from each other that kind of resonate with you or, you know, Sound familiar?",
       "pull_quote": null,
@@ -36329,10 +36445,10 @@
     {
       "type": "response",
       "id": "r_049",
-      "responds_to": "TODO: Add question ID this responds to (e.g., q_001)",
+      "responds_to": "q_006",
       "speaker_name": "Speaker B",
       "speaker_text": "Yeah. The city is not happy, basically. What do you mean? I mean, what. There's so much negativity going on. People just aren't feeling positive about the future, so they're just being mean.",
-      "pull_quote": null,
+      "pull_quote": "The city is not happy, basically",
       "audio_start": 1668080,
       "audio_end": 1683200,
       "conversation_id": "conv_40650ffb",
@@ -36581,7 +36697,7 @@
     {
       "type": "response",
       "id": "r_050",
-      "responds_to": "TODO: Add question ID this responds to (e.g., q_001)",
+      "responds_to": "r_049",
       "speaker_name": "Speaker A",
       "speaker_text": "I mean, do you have a particular experience that people don't wish you happy.",
       "pull_quote": null,
@@ -36700,7 +36816,7 @@
     {
       "type": "response",
       "id": "r_051",
-      "responds_to": "TODO: Add question ID this responds to (e.g., q_001)",
+      "responds_to": "q_006",
       "speaker_name": "Speaker C",
       "speaker_text": "Well, at my job, we can't do that because we have different nationalities.",
       "pull_quote": null,
@@ -36812,7 +36928,7 @@
     {
       "type": "response",
       "id": "r_052",
-      "responds_to": "TODO: Add question ID this responds to (e.g., q_001)",
+      "responds_to": "q_006",
       "speaker_name": "Speaker B",
       "speaker_text": "So that's when you start saying, happy Holidays. Yeah. And leave it at that. Yeah. And leave it at that. Now they stop. Don't say that. Yeah. It's like you can't say it. Yeah. And leave it at that. Now they stop. Don't say that. Yeah. It's like you can't say it. There's always something that's kind of mean. I think they used to do that at Stop and Shop.",
       "pull_quote": null,
@@ -37323,7 +37439,7 @@
     {
       "type": "response",
       "id": "r_053",
-      "responds_to": "TODO: Add question ID this responds to (e.g., q_001)",
+      "responds_to": "q_006",
       "speaker_name": "Speaker C",
       "speaker_text": "You can't be like, merry Christmas because you Christmas cards.",
       "pull_quote": null,
@@ -37414,7 +37530,7 @@
     {
       "type": "response",
       "id": "r_054",
-      "responds_to": "TODO: Add question ID this responds to (e.g., q_001)",
+      "responds_to": "q_006",
       "speaker_name": "Speaker B",
       "speaker_text": "But you can't wish people. Yeah, Happy holiday. That makes no sense.",
       "pull_quote": null,
@@ -37519,7 +37635,7 @@
     {
       "type": "response",
       "id": "r_055",
-      "responds_to": "TODO: Add question ID this responds to (e.g., q_001)",
+      "responds_to": "q_006",
       "speaker_name": "Speaker C",
       "speaker_text": "That's another big change. It should have, like, they have Chinese New Year. We don't know nothing about that. But if I go in a restaurant and they say Chinese New Year's, I just say happy New Year, you know? Sure. But I. I can't celebrate Chinese New Year's because I have no idea where to begin. But maybe if my co worker could explain to me, what's Chinese New Year's I might can join in. I don't know. Yeah, but the job don't give you that opportunity. Sure. But I. I can't celebrate Chinese New Year's because I have no idea where to begin. But maybe if my co worker could explain to me, what's Chinese New Year's I might can join in. I don't know. Yeah, but the job don't give you that opportunity. Really. That's too bad. Yeah.",
       "pull_quote": null,
@@ -38527,7 +38643,7 @@
     {
       "type": "response",
       "id": "r_056",
-      "responds_to": "TODO: Add question ID this responds to (e.g., q_001)",
+      "responds_to": "r_055",
       "speaker_name": "Speaker A",
       "speaker_text": "Is there anything else that you heard that make. Reminds you of something that happened to you?",
       "pull_quote": null,
@@ -38667,7 +38783,7 @@
     {
       "type": "response",
       "id": "r_057",
-      "responds_to": "TODO: Add question ID this responds to (e.g., q_001)",
+      "responds_to": "q_007",
       "speaker_name": "Speaker C",
       "speaker_text": "Yes. Not being safe, not being saved. Because, you know, when I was 16, the. They were stabbing each other. That was a long time ago because I'm 50, but they would stab each other, you know, in the fist fight. And I witnessed people getting stabbed in, like, the lungs and. Yeah. So that brought back the noise.",
       "pull_quote": null,
@@ -39101,10 +39217,10 @@
     {
       "type": "response",
       "id": "r_058",
-      "responds_to": "TODO: Add question ID this responds to (e.g., q_001)",
+      "responds_to": "q_007",
       "speaker_name": "Speaker D",
       "speaker_text": "I mean, from there until now, you still, like, seeing that we are not done or we. We still have like, concern about safety is something that they really need to look into it, you know?",
-      "pull_quote": null,
+      "pull_quote": "We still have concern about safety that they really need to look into",
       "audio_start": 1783820,
       "audio_end": 1799320,
       "conversation_id": "conv_40650ffb",
@@ -39374,7 +39490,7 @@
     {
       "type": "response",
       "id": "r_059",
-      "responds_to": "TODO: Add question ID this responds to (e.g., q_001)",
+      "responds_to": "r_058",
       "speaker_name": "Speaker A",
       "speaker_text": "Yeah, no, I think that's real important. Yeah, I appreciate that. We need some safety grounds. Yeah. I mean, is there anything else you want to share? We can wrap up now, Unless there's other questions you have or.",
       "pull_quote": null,
@@ -39668,10 +39784,10 @@
     {
       "type": "response",
       "id": "r_060",
-      "responds_to": "TODO: Add question ID this responds to (e.g., q_001)",
+      "responds_to": "q_008",
       "speaker_name": "Speaker C",
       "speaker_text": "Well, I do want to say this because now she make a good point about being safe. Because these people will fight the police. We used to be scared of the police, but now these people will fight the police. So, yeah, I don't know. That's a good example out here because I don't feel safe with the police or anything. I'd be ready to protect myself.",
-      "pull_quote": null,
+      "pull_quote": "I can't even sleep because security company never answers",
       "audio_start": 1813480,
       "audio_end": 1833410,
       "conversation_id": "conv_40650ffb",
@@ -40158,7 +40274,7 @@
     {
       "type": "response",
       "id": "r_061",
-      "responds_to": "TODO: Add question ID this responds to (e.g., q_001)",
+      "responds_to": "q_008",
       "speaker_name": "Speaker B",
       "speaker_text": "Well, not only that, they. They're known for killing people of color, so why would we call them? If somebody in my family got killed because I called the cops, I would have to deal with that for the rest of my life. No, thank you. I gotta deal with my family.",
       "pull_quote": null,
@@ -40543,7 +40659,7 @@
     {
       "type": "response",
       "id": "r_062",
-      "responds_to": "TODO: Add question ID this responds to (e.g., q_001)",
+      "responds_to": "q_008",
       "speaker_name": "Speaker C",
       "speaker_text": "You know, I had a experience with that because my uncle worked for Barton Police. He still does, but now he just sit at the desk. But when he was out, I guess. They call it out on the streets. On the streets? The lady called and she said she's hiding in the bathroom. Her boyfriend is abusing her. So he happened to be the first person on site. And when he got there, he. She came out and she's like, he's upstairs because he's talking to her, whispering, where is he? Where is he? You know, so he can know. So he goes up the stairs, he pulls out his gun, and he's like, listen, I'm gonna put you under arrest till I get to the story. He's like, no, you're not putting me under arrest. He's like, I have to put you under arrest, sir, until I get the story right now, you're being dangerous. So he jumps on my uncle and I fall down the stairs, and guess what she does? She start kicking and punching my uncle. That's why I said, call the police.",
       "pull_quote": null,
@@ -41880,7 +41996,7 @@
     {
       "type": "response",
       "id": "r_063",
-      "responds_to": "TODO: Add question ID this responds to (e.g., q_001)",
+      "responds_to": "q_008",
       "speaker_name": "Speaker B",
       "speaker_text": "I was a victim of a violent crime. And the police made me feel like I deserved it, like I was asking for it, so I wouldn't deal with them. It wasn't in Boston, but still, what happened? I was a victim of a violent crime. Some guy broke into my house and kicked me in my face and beat me up and raped me and stabbed me 10 times. Oh, no. I was 18 years old. Two days and two. Two days and two months after my birthday. Yeah. So it happens everywhere. Oh, no. I was 18 years old. Two days and two. Two days and two months after my birthday. Yeah. So it happens everywhere. New York is super for me. This wasn't in New York. This was in Oklahoma. Nothing never happened to me in New York. I got too much relatives out there.",
       "pull_quote": null,
@@ -42937,7 +43053,7 @@
     {
       "type": "response",
       "id": "r_064",
-      "responds_to": "TODO: Add question ID this responds to (e.g., q_001)",
+      "responds_to": "q_008",
       "speaker_name": "Speaker C",
       "speaker_text": "Yeah. Because my cousins went up to New Hampshire. And I'm telling you, when I tell you.",
       "pull_quote": null,
@@ -43077,7 +43193,7 @@
     {
       "type": "response",
       "id": "r_065",
-      "responds_to": "TODO: Add question ID this responds to (e.g., q_001)",
+      "responds_to": "q_008",
       "speaker_name": "Speaker B",
       "speaker_text": "No, I'm talking about out in the west where they hate black people. Especially mixed black people. Okay. They treat you really bad. I had a chest tube come out of me and they cut me open without any pain medication because I was mixed. My mother was so upset. I never seen her so freaked out in my life. You know, I don't trust doctors. You know, I gotta really have a. Have a good relationship with them. But I don't trust cops at all. And they tried to make it sound like someone else did it. They wouldn't take into consideration what actually happened. They tried to make me feel like I was lying about. You know, so. Yeah. Yeah. No. When something like that happens to you and you're fighting for your life and people are trying to push you back, you know, not to trust them. So, yeah, I came back on the plane with a tube in my chest. I could have died coming home, but I was getting the hell out of there. I really was.",
       "pull_quote": null,
@@ -44372,7 +44488,7 @@
     {
       "type": "response",
       "id": "r_066",
-      "responds_to": "TODO: Add question ID this responds to (e.g., q_001)",
+      "responds_to": "q_008",
       "speaker_name": "Speaker B",
       "speaker_text": "That's the first time I ever really dealt with racism too. I mean, I've dealt with it here, but not like there. And it's worse there now because of all this Republican and them doing these women like that with the abortions and everything else. So I would go out there if you paid me. My boyfriend's brother wants to move to Texas because he's in love with some girl from Me, some Mexican girl that just moved back there. He's trying to tell him not to go because he's afraid something could happen to him because he's black, you know.",
       "pull_quote": null,
@@ -45100,7 +45216,7 @@
     {
       "type": "response",
       "id": "r_067",
-      "responds_to": "TODO: Add question ID this responds to (e.g., q_001)",
+      "responds_to": "q_008",
       "speaker_name": "Speaker B",
       "speaker_text": "This happened because a young white boy wanted to do something to me. I never saw this person, so I don't know why he did what he did. All I know was some young white boy. But the cops refused to blame it on him and tried to put it on my boyfriend. My boyfriend's the one that found me. I bled for almost seven hours before I was found. So to put him through all that was wrong because he saved my life. But they tried to put it on him. So, you know, you laying in a hospital bed and they're trying to force a legion on you and everything else and, and trying to make you say that it was someone that it wasn't. It just doesn't make sense, you know? So it's hard to be honest when everybody's telling you not to be, you know? And the funny thing is, I don't lie about shit. I'm so honest. Even if it's like, Michelle, you should know that that's the way it is, you know? But yeah, I've always been an honest person. But they made me question that, you know, I'm okay, I'm 60 years old. He didn't kill me. He tried are. You know, he just took away my ability to have kids. That's all.",
       "pull_quote": null,
@@ -46661,7 +46777,7 @@
     {
       "type": "response",
       "id": "r_068",
-      "responds_to": "TODO: Add question ID this responds to (e.g., q_001)",
+      "responds_to": "q_008",
       "speaker_name": "Speaker C",
       "speaker_text": "And that's another thing for the future. We ain't safe to be safe.",
       "pull_quote": null,
@@ -46773,7 +46889,7 @@
     {
       "type": "response",
       "id": "r_069",
-      "responds_to": "TODO: Add question ID this responds to (e.g., q_001)",
+      "responds_to": "q_008",
       "speaker_name": "Speaker B",
       "speaker_text": "Well, that's why I have a little dog. Because if you come to my door, she going to let me know, you know, if I'm going to live by myself, I got to have a little alarm. That's my alarm.",
       "pull_quote": null,
@@ -47074,7 +47190,7 @@
     {
       "type": "response",
       "id": "r_070",
-      "responds_to": "TODO: Add question ID this responds to (e.g., q_001)",
+      "responds_to": "q_008",
       "speaker_name": "Speaker C",
       "speaker_text": "I'm like a laid back, quiet person. Like. Oh, I am too. I. I lived at 225 Blue Hill Ave. And I don't know how many people in that building, but it's at least 300. And it was like, you live here. Yeah, but I don't bother nobody. I don't talk to nobody. I don't want no problem.",
       "pull_quote": null,
@@ -47501,7 +47617,7 @@
     {
       "type": "response",
       "id": "r_071",
-      "responds_to": "TODO: Add question ID this responds to (e.g., q_001)",
+      "responds_to": "q_008",
       "speaker_name": "Speaker B",
       "speaker_text": "Those millions of pompings, I mean so much. You got a million neighbors. You don't have to know them. They just live there, right?",
       "pull_quote": null,
@@ -47690,7 +47806,7 @@
     {
       "type": "response",
       "id": "r_072",
-      "responds_to": "TODO: Add question ID this responds to (e.g., q_001)",
+      "responds_to": "q_008",
       "speaker_name": "Speaker C",
       "speaker_text": "I just mind my business. Oh, that's your car? Yes. Right now, no one's happy. I just want to be. But you know, I'm a self person. I just want to be by myself. And if you can make one little friend and that friend will give you so much trouble. I learned growing up. So I don't need friends.",
       "pull_quote": null,
@@ -48131,7 +48247,7 @@
     {
       "type": "response",
       "id": "r_073",
-      "responds_to": "TODO: Add question ID this responds to (e.g., q_001)",
+      "responds_to": "q_008",
       "speaker_name": "Speaker B",
       "speaker_text": "Yeah, I don't have any friends over here. I know one person. She is sometimey, you know. You see? Yeah, she's very sometimey.",
       "pull_quote": null,
@@ -48313,7 +48429,7 @@
     {
       "type": "response",
       "id": "r_074",
-      "responds_to": "TODO: Add question ID this responds to (e.g., q_001)",
+      "responds_to": "q_008",
       "speaker_name": "Speaker C",
       "speaker_text": "I just say to myself. I just say to myself, it's the best way.",
       "pull_quote": null,
@@ -48432,7 +48548,7 @@
     {
       "type": "response",
       "id": "r_075",
-      "responds_to": "TODO: Add question ID this responds to (e.g., q_001)",
+      "responds_to": "r_074",
       "speaker_name": "Speaker A",
       "speaker_text": "Did you have any other questions or thoughts, Alda or.",
       "pull_quote": null,
@@ -48523,7 +48639,7 @@
     {
       "type": "response",
       "id": "r_076",
-      "responds_to": "TODO: Add question ID this responds to (e.g., q_001)",
+      "responds_to": "q_008",
       "speaker_name": "Speaker B",
       "speaker_text": "We all have something to say about what happened in our lives. I mean, that's what life is all about, right? It's pretty horrible. Yeah. I don't think about it as being horrible. I just think of it as what makes you who you are, you know, I wouldn't be who I am if I didn't go to what I went to. So I'm not gonna be mad about it.",
       "pull_quote": null,
@@ -49034,7 +49150,7 @@
     {
       "type": "response",
       "id": "r_077",
-      "responds_to": "TODO: Add question ID this responds to (e.g., q_001)",
+      "responds_to": "r_076",
       "speaker_name": "Speaker A",
       "speaker_text": "Okay, well, I just want to see if anybody has anything else they want to say. Any other questions you have or experiences. Okay. Well, thank you.",
       "pull_quote": null,
@@ -49244,7 +49360,7 @@
     {
       "type": "response",
       "id": "r_078",
-      "responds_to": "TODO: Add question ID this responds to (e.g., q_001)",
+      "responds_to": "q_008",
       "speaker_name": "Speaker C",
       "speaker_text": "I just had one thing to say. I wish Mayor Menina was still around. He helped us so much. Yeah. Yeah.",
       "pull_quote": null,
@@ -49412,7 +49528,7 @@
     {
       "type": "response",
       "id": "r_079",
-      "responds_to": "TODO: Add question ID this responds to (e.g., q_001)",
+      "responds_to": "q_008",
       "speaker_name": "Speaker B",
       "speaker_text": "I never got help in Boston, so I never know. This is my first time dealing with this apartment type stuff and everything like that.",
       "pull_quote": null,
@@ -49608,7 +49724,7 @@
     {
       "type": "response",
       "id": "r_080",
-      "responds_to": "TODO: Add question ID this responds to (e.g., q_001)",
+      "responds_to": "q_008",
       "speaker_name": "Speaker C",
       "speaker_text": "Oh, man, Manina was so nice. He's the one who started building everything.",
       "pull_quote": null,
@@ -49720,7 +49836,7 @@
     {
       "type": "response",
       "id": "r_081",
-      "responds_to": "TODO: Add question ID this responds to (e.g., q_001)",
+      "responds_to": "q_008",
       "speaker_name": "Speaker B",
       "speaker_text": "And see, when I moved to Cambridge and effort and Malden, I didn't live in Boston. I didn't move into Boston until I was almost 30 because my ex boyfriend is 6 foot 9 inches. I had to get away from the North Shore because I couldn't. I couldn't go anywhere. Everyone knew him. Everywhere I went. It's like, oh, please, I need to get away from him. So I moved to Boston because I know he's scared of these people over here. And he left me alone. See? Okay. Sometimes you gotta run away from these men.",
       "pull_quote": null,
@@ -50427,7 +50543,7 @@
     {
       "type": "response",
       "id": "r_082",
-      "responds_to": "TODO: Add question ID this responds to (e.g., q_001)",
+      "responds_to": "r_081",
       "speaker_name": "Speaker A",
       "speaker_text": "Okay, well, I just wanna. I want to thank you. And do you have any questions for us about anything? What's going to happen with this recording or. No. Anything else?",
       "pull_quote": null,
@@ -50665,7 +50781,7 @@
     {
       "type": "response",
       "id": "r_083",
-      "responds_to": "TODO: Add question ID this responds to (e.g., q_001)",
+      "responds_to": "q_008",
       "speaker_name": "Speaker C",
       "speaker_text": "Well, who will listen to it? Is it someone that can help us without that will listen to it, that can go forward for our future, for our grand. Like my granddaughter growing up to help her be safe?",
       "pull_quote": null,
@@ -50959,7 +51075,7 @@
     {
       "type": "response",
       "id": "r_084",
-      "responds_to": "TODO: Add question ID this responds to (e.g., q_001)",
+      "responds_to": "r_083",
       "speaker_name": "Speaker A",
       "speaker_text": "Yeah. That's part of what the leadership class I think will be dealing with. We're going to record it and then we're going to have. I mean, the current mayor, Michelle Wu, has Already listened to this on Boston Neighborhood News and we have to follow up. So that's part of what the leadership class and we're doing follow up all across the city with Dunk the Vote and an organization that does leadership training for people everywhere so we can make sure people.",
       "pull_quote": null,
@@ -51568,7 +51684,7 @@
     {
       "type": "response",
       "id": "r_085",
-      "responds_to": "TODO: Add question ID this responds to (e.g., q_001)",
+      "responds_to": "q_008",
       "speaker_name": "Speaker B",
       "speaker_text": "So they're going to do the program all over this city.",
       "pull_quote": null,
@@ -51666,7 +51782,7 @@
     {
       "type": "response",
       "id": "r_086",
-      "responds_to": "TODO: Add question ID this responds to (e.g., q_001)",
+      "responds_to": "r_085",
       "speaker_name": "Speaker A",
       "speaker_text": "We're doing this all over the city. We have. We've already had over 50 conversations like this with over, I don't know, 350 people have, you know, in small groups.",
       "pull_quote": null,
@@ -51897,7 +52013,7 @@
     {
       "type": "response",
       "id": "r_087",
-      "responds_to": "TODO: Add question ID this responds to (e.g., q_001)",
+      "responds_to": "q_008",
       "speaker_name": "Speaker B",
       "speaker_text": "Like this they go into the North Shore as well.",
       "pull_quote": null,
@@ -51988,7 +52104,7 @@
     {
       "type": "response",
       "id": "r_088",
-      "responds_to": "TODO: Add question ID this responds to (e.g., q_001)",
+      "responds_to": "r_087",
       "speaker_name": "Speaker A",
       "speaker_text": "Going in Boston. Yeah, in Boston. We may be doing it in other cities. Some friends of mine in Everett that are interested but right now this is just Boston. Although we're also listening to people who've grown up in Boston who had to move away like Elias who's lived in Dorchester. And a lot of people have moved to Brockton Fall river because they can't afford Dorchester has become more expensive than Brockton Fall River. So there's a lot of people who grew up in Roxbury, Dorchester, Mattapan that can't afford to live there anymore and a lot of them have moved. So we're also want to find and listen to those people because what's happened when things become so crazy expensive like you know you were saying a one bedroom, thirteen hundred dollars. So we're trying to listen to you know, first people in Boston. But if you know people who've had to move out like Aaliyah says, you know, not happy about it. Like commuting so far every day. So much traffic especially so you don't.",
       "pull_quote": null,
@@ -53262,7 +53378,7 @@
     {
       "type": "response",
       "id": "r_089",
-      "responds_to": "TODO: Add question ID this responds to (e.g., q_001)",
+      "responds_to": "q_008",
       "speaker_name": "Speaker B",
       "speaker_text": "Yeah, a lot of good jobs like people just. I don't even want to work anymore, you know.",
       "pull_quote": null,
@@ -53409,7 +53525,7 @@
     {
       "type": "response",
       "id": "r_090",
-      "responds_to": "TODO: Add question ID this responds to (e.g., q_001)",
+      "responds_to": "r_089",
       "speaker_name": "Speaker A",
       "speaker_text": "Yeah. So I just want to make sure you fill out. I think you all did fill out the form. And they'll be sending you a gift card actually if one of you wants to I have an extra one from our last thing because one person wasn't there. If one of you would rather get it it in person rather than over email, I would too. I wouldn't mind. Well, I only have one so give it to her. I wouldn't mind. Well, I only have one so give it to her. It doesn't matter. Okay, then why don't you k. Why don't you write on the back on the bottom of this this receive gift card. I'll just write it. I wouldn't mind. Well, I only have one so give it to her. It doesn't matter. Okay, then why don't you k. Why don't you write on the back on the bottom of this this receive gift card. I'll just write it. Okay. So because we have to make sure.",
       "pull_quote": null,
@@ -54634,10 +54750,10 @@
     {
       "type": "response",
       "id": "r_091",
-      "responds_to": "TODO: Add question ID this responds to (e.g., q_001)",
+      "responds_to": "q_008",
       "speaker_name": "Speaker C",
       "speaker_text": "That they got a lot of positions and they're from home.",
-      "pull_quote": null,
+      "pull_quote": "Will someone listen to it that can help our future be safe?",
       "audio_start": 2486580,
       "audio_end": 2489460,
       "conversation_id": "conv_40650ffb",
@@ -54732,7 +54848,7 @@
     {
       "type": "response",
       "id": "r_092",
-      "responds_to": "TODO: Add question ID this responds to (e.g., q_001)",
+      "responds_to": "r_091",
       "speaker_name": "Speaker A",
       "speaker_text": "I had this extra but Alda and Michelle. Yeah, just sign that in. Dated. Okay, so we're. It's about seven o'. Clock. Well, thank you. Okay, thank you.",
       "pull_quote": null,

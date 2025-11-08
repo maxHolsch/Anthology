@@ -1,10 +1,5 @@
 # Anthology - Community Story Visualizer Design Document
 
-todo:
-[ ] Would we like the nodes to look better than this? Go through figma mcp, see if this is actually in line with that is described
-[ ] prompt node logic for clicks (with multiple prompts)
-[X] have it be pull quotes instead of nodes?
-[ ] what if there were shooting stars across the network?
 
 ## Project Overview
 
@@ -203,31 +198,6 @@ The system supports displaying multiple conversations simultaneously on the same
 - **Unselected (different conversation)**: 40% opacity
 - **Playing**: Full saturation and opacity (state does not change from selected)
 
-### 5. Data Processing Pipeline
-
-#### Decoupled Architecture
-**Design Principle**: The system uses an adapter pattern to decouple the input JSON structure from the internal data representation. Json formatting and organization will be handled in a seperate program
-
-#### Input Handling
-**Supported Input Formats**:
-- JSON files with various configurations
-- Plain text files (.txt)
-- Future extensibility for other formats
-- Seperate system will convert audio and transcripts into the correct format
-
-**Processing Workflow**:
-1. Accept raw input file (JSON or TXT)
-2. Apply format-specific adapter/transformer
-3. Utilize LLM for intelligent parsing and structuring (if needed)
-4. Convert to standardized internal data model
-
-
-
-5. Validate data integrity and relationships (we want in our program + graceful error handling)
-
-
-
-6. Generate visualization-ready data structure
 
 
 #### Data Schema
@@ -330,10 +300,10 @@ The interface should follow the aesthetic and interaction patterns demonstrated 
 
 ## Comment Rail
 
-- **Home View**: https://www.figma.com/design/3RRAJtxVKX0kbSZT8ouJWa/Anthology-III?node-id=94-17264&m=dev
+- **Conversations View**: https://www.figma.com/design/3RRAJtxVKX0kbSZT8ouJWa/Anthology-III?node-id=94-17264&m=dev
 
   -**Question Tile**: https://www.figma.com/design/3RRAJtxVKX0kbSZT8ouJWa/Anthology-III?node-id=94-17536&m=dev
-    - Stack these to display multiple Questions in Home View
+    - Stack these to display multiple Questions in Conversations View
 
 
 - **Question View**: https://www.figma.com/design/3RRAJtxVKX0kbSZT8ouJWa/Anthology-III?node-id=94-17360&m=dev
