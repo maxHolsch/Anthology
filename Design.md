@@ -36,13 +36,11 @@ todo:
 **Response Nodes** 
 - **Visual Representation**: Displayed as visible geometric shapes that users can interact with
   - **Standard Nodes** (without pull_quote): Circles for responses
-<<<<<<< HEAD
   - **Pull Quote Nodes** (with pull_quote): Rectangles displaying the quoted text
-=======
+  - **Standard Nodes** (without pull_quote): Circles for responses
     - **Visual Reference**: https://www.figma.com/design/3RRAJtxVKX0kbSZT8ouJWa/Anthology-III?node-id=94-17609&m=dev
   - **Pull Quote Nodes** (with pull_quote): Slightly rounded rectangles displaying the quoted text
     - **Visual Reference**: https://www.figma.com/design/3RRAJtxVKX0kbSZT8ouJWa/Anthology-III?node-id=94-17598&m=dev
->>>>>>> fd54d00d22e366987354ac7facaea508554adb05
 - **Visual States**:
   - Default (All unselected): Full color
   - Selected/Active: Full color, while all other nodes are faded (50% opacity)
@@ -52,14 +50,8 @@ todo:
   - Always visible at all zoom levels (no progressive disclosure)
   - Node shapes scale with zoom (get bigger when zooming in)
   - All nodes remain interactive and clickable at any zoom level
-<<<<<<< HEAD
 - **Interaction**:
   - Clickin on node zooms in on and centers node, and triggers node view in comment rail
-=======
-- **Node Types**:
-  - Prompt nodes: Not displayed.
-  - Response nodes: Trigger full individual excerpt display when clicked.
->>>>>>> fd54d00d22e366987354ac7facaea508554adb05
 - **Data Structure**:
   - Type: prompt/response. Prompt nodes are ignored, only response nodes are used
   - Type field: "response" (transcrit of what is said)
@@ -117,7 +109,6 @@ todo:
   - **Visual Reference**: https://www.figma.com/design/3RRAJtxVKX0kbSZT8ouJWa/Anthology-III?node-id=94-17360&m=dev
 - **Question Text Selected** (when user clicks on Question Node on Map, or on Question Tile on Comment Rail):
   - Display question text prominently in comment rail
-<<<<<<< HEAD
   - Show all directly connected response nodes in the scrollable comment rail
   - Brief overview/preview of each response node
   - Enable quick navigation between response nodes. When you click on a response node in the comment rail, it zooms into that one and goes into the single node view
@@ -125,33 +116,6 @@ todo:
   - **Audio Playback**: Random "shuffle" playback button that plays one connected response node at a time
   - Reference: [Figma Frame 4-3428](https://www.figma.com/design/3RRAJtxVKX0kbSZT8ouJWa/Anthology-III?node-id=4-3428&t=JN4qdlt1xDfI1Af0-4)
 
-=======
-  - Show all connected Response Nodes in the comment rail
-
-  - **Conversation Audio Player**: Prominent play button to play 'Conversation Medley', a montage of most relevant excerpts
-  - **Audio Playlist Behavior**:
-    - When play is clicked
-    - Plays that response node, then randomly selects another connected response
-    - Continues random selection through all connected response nodes
-    - Prompt nodes remain visible in comment rail during playback
-    - Currently playing response node is highlighted on the map in real-time
-    - **Simplified Navigation**: Only previous/next buttons available
-  - **Auto-play Option**: Setting to automatically start playing when question text is clicked
-  - Reference: [Figma Frame 4-3428](https://www.figma.com/design/3RRAJtxVKX0kbSZT8ouJWa/Anthology-III?node-id=4-3428&t=JN4qdlt1xDfI1Af0-4)
-
-**Home View View**
-- Display abridged versions of all selected nodes (unlimited capacity)
-- Accommodate any number of selected nodes via scrolling
-- "Click for full text" expansion capability for each node, which opens individual node view.
-- Efficient scrollable container with smart space usage
-- **Selection Hierarchy** (non-cascading):
-  - Clicking a prompt node: Selects ONLY response nodes directly attached to that prompt (no further cascading)
-  - Clicking a question node: Selects ONLY prompt nodes directly attached to that question (responses NOT included)
-  - No automatic cascade: Each click selects only one level of the hierarchy
-- Intelligent grouping: Automatically organizes related nodes visually in the rail
-- **Audio Playback**: When prompt node clicked, plays connected response nodes in chronological order
-
->>>>>>> fd54d00d22e366987354ac7facaea508554adb05
 #### Interface Features
 - **Responsive Layout**: Adapts to different screen sizes and orientations
 - **Smooth Transitions**: Animated transitions between different view modes
@@ -360,22 +324,7 @@ The system supports displaying multiple conversations simultaneously on the same
 - Quick response to user interactions
 - Optimize rendering for all visible nodes (no lazy loading based on zoom)
 
-<<<<<<< HEAD
-## Visual Design References
-=======
-### Scalability
-- Support for stories with varying complexity
-- Efficient memory management for large node networks
-- Performance optimization for rendering all nodes simultaneously
-
-### Accessibility
-- Keyboard navigation support
-- Screen reader compatibility
-- High contrast mode options
-- Text size adjustments
-
 ### Visual Design References
->>>>>>> fd54d00d22e366987354ac7facaea508554adb05
 
 The interface should follow the aesthetic and interaction patterns demonstrated in the Figma designs:
 
@@ -501,39 +450,6 @@ Manages complex user interactions:
 - Context menu state and options
 
 
-<<<<<<< HEAD
-=======
-**Map → Rail Flow**:
-1. User clicks node on map
-2. Map component calls store action
-3. Store updates selected nodes and rail display mode
-4. Rail component reacts to selection change
-5. Rail auto-scrolls to show selected content
-6. Audio queue updates if applicable
-
-**Rail → Map Flow**:
-1. User clicks node in comment rail
-2. Rail component calls store action
-3. Store updates selected nodes and map highlight
-4. Map component reacts to selection change
-5. Map pans/zooms to center selected node
-6. D3 force simulation adjusts if needed
-
-**Audio → Both Components**:
-1. Audio playback progresses
-2. Store updates current playing node
-3. Map highlights currently playing node with pulse effect
-4. Rail highlights corresponding text and scrolls
-5. Both components stay synchronized
-
-#### Performance Optimization Strategies
-
-- **Selective Subscriptions**: Components use selector functions to subscribe only to needed state slices
-- **Memorized Selectors**: Complex derived state (like connected nodes) cached until dependencies change
-- **Shallow Equality Checks**: Prevent unnecessary re-renders with shallow comparison
-- **Batched Updates**: Multiple rapid state changes batched into single update
-- **Lazy State Initialization**: Heavy computations deferred until needed
->>>>>>> fd54d00d22e366987354ac7facaea508554adb05
 
 #### State Persistence and Hydration
 
