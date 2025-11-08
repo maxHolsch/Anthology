@@ -1,19 +1,17 @@
 # Anthology - Community Story Visualizer Design Document
 
 todo:
-[X] question nodes
 [ ] Would we like the nodes to look better than this? Go through figma mcp, see if this is actually in line with that is described
 [ ] prompt node logic for clicks (with multiple prompts)
 [X] have it be pull quotes instead of nodes?
 [ ] what if there were shooting stars across the network?
-[X] What is our stack?
 
 ## Project Overview
 
-**Anthology** is an interactive visualization platform for exploring community stories through a dynamic, interconnected map interface. The system presents conversations and narratives as a network of nodes, allowing users to navigate through questions, responses, and excerpts in an intuitive visual format.
+**Anthology** is an interactive visualization platform for exploring community stories through a dynamic, interconnected map interface. The system presents conversations and narratives as a network of nodes, allowing users to navigate through questions, and responses in an intuitive visual format.
 
 ## Core Components
-testing
+
 ### 1. Visual Map System
 
 #### Node Types and Behavior
@@ -22,60 +20,75 @@ testing
 - **Visual Representation**: Displayed as floating text only (no visible node shape or marker)
 - **Positioning Logic**:
   - Question nodes are actual nodes in the D3 force-directed graph
-  - Prompt nodes have direct connections (links) to their question node
-  - D3 force simulation naturally positions questions based on connected prompts
+  - Response nodes have direct connections (links) to their question node
+  - D3 force simulation naturally positions questions based on connected responses
 - **Text Display**:
   - Question text renders directly on the map canvas without any containing shape
   - Text maintains consistent screen-relative size regardless of zoom level (semantic zoom)
   - Text acts as clickable area for interaction
-- **Visibility Rules**:
-  - Text visible when zoomed out (zoom level < 25%)
-  - Act as navigational landmarks for the overall story structure through text positioning
+
 - **Data Structure**:
   - Contains question text
-  - Maintains array of pointers to related prompt nodes
-  - Acts as a node in the force-directed graph with x/y coordinates
+  - Maintains array of pointers to related response nodes
+  - Acts as a node in the force-directed graph
 
-**Excerpt Nodes**
+**Response Nodes** 
 - **Visual Representation**: Displayed as visible geometric shapes that users can interact with
-  - **Standard Nodes** (without pull_quote): Circles for responses, squares for prompts
+  - **Standard Nodes** (without pull_quote): Circles for responses
   - **Pull Quote Nodes** (with pull_quote): Rectangles displaying the quoted text
 - **Visual States**:
-  - Unselected: Full color
+  - Default (All unselected): Full color
   - Selected/Active: Full color, while all other nodes are faded (50% opacity)
   - Reference: [Figma Frame 4-3496](https://www.figma.com/design/3RRAJtxVKX0kbSZT8ouJWa/Anthology-III?node-id=4-3496&t=JN4qdlt1xDfI1Af0-4)
 - **Visibility Rules**:
   - Always visible at all zoom levels (no progressive disclosure)
   - Node shapes scale with zoom (get bigger when zooming in)
   - All nodes remain interactive and clickable at any zoom level
-- **Node Types**:
-  - Prompt nodes: Small gray circles, trigger question display when clicked. Reference: [Figma Frame 4-3496](https://www.figma.com/design/3RRAJtxVKX0kbSZT8ouJWa/Anthology-III?node-id=4-3496&t=JN4qdlt1xDfI1Af0-4)
-  - Response nodes: Full color. Trigger full individual excerpt display when clicked.
+- **Interaction**:
+  - Clickin on node zooms in on and centers node, and triggers node view in comment rail
 - **Data Structure**:
-  - Type field: "prompt" or "response"
-  - "responds_to" field: pointer to parent node
+  - Type: prompt/response. Prompt nodes are ignored, only response nodes are used
+  - Type field: "response" (transcrit of what is said)
+  - "responds_to" field: pointer to parent question node, or (if responding to a different response node) pointing to parent response node
   - Speaker name
   - Speaker text content
+  - Pointer to partent conversation
   - Audio timestamps (start and end)
   - Pull quote (optional): featured text excerpt for rectangle visualization
 
 #### Spatial Organization
-- **Graph Structure**: Three node types (questions, prompts, responses) with two link types:
-  - Question ← Prompt links (prompts connect to questions)
-  - Prompt ← Response links (responses connect to prompts)
+- **Graph Structure**: Two node types (questions, responses) with two link types:
+  - Question ← Response links (responses connect directly to questions)
+  - Response ← response links (response connects to a previous response)
+  - **Link Visualization**: Connections rendered with slight curvature for visual elegance
+    - Curved paths using cubic Bézier curves
+    - Subtle arc to prevent overlapping connections
+    - Curvature adapts based on node positioning
 - **D3 Force-Directed Layout**: Automatic positioning based on node connections
-  - Force simulation handles all spatial calculations
-  - Questions naturally cluster with their connected prompts
-  - Prompts cluster with their connected responses
+  - Force simulation handles all spatial calculations. Generally, we want the nodes to feel fairly spread out.
+  - Questions naturally cluster with their connected responses
+  - Response groups form around their associated questions
 - **Zoom Behavior**:
   - Standard D3 zoom applies to the entire map canvas
   - All nodes remain visible at all zoom levels
-  - Excerpt nodes (prompts/responses) scale proportionally with zoom
+  - Response nodes scale proportionally with zoom
   - Question text maintains constant screen size (semantic zoom)
 
 ### 2. Comment Rail Interface
 
 #### Display Modes
+
+**Initial Conversations View** (Default on Page Load)
+- **Purpose**: Entry point to the visualization, displayed when page first opens
+- **Content Display**:
+  - Shows all question nodes present in the map
+  - List format in the comment rail
+  - Each question is clickable
+- **Interaction**:
+  - Clicking on a question zooms in on that question on the map and transitions to Question Node View
+  - Returns to this view when all nodes are deselected (clicking on empty map space)
+  - **Important**: Returning to this view does NOT zoom out the map - only changes comment rail content
+- **Navigation**: Acts as the home state for the comment rail
 
 **Single Node View**
 - **Response Node Selected**:
@@ -87,31 +100,12 @@ testing
 **Question Node View**
 - **Question Text Selected** (when user clicks on floating question text):
   - Display question text prominently in comment rail
-  - Show all connected prompt nodes in the comment rail (ONLY prompts, NOT their responses)
-  - Brief overview/preview of each prompt node
-  - Enable quick navigation between prompt nodes
-  - **Conversation Audio Player**: Prominent play button to play entire conversation in random order
-  - **Audio Playlist Behavior**:
-    - When play is clicked, randomly selects a response node connected to the question (via question → prompt → response path)
-    - Plays that response node, then randomly selects another connected response
-    - Continues random selection through all connected response nodes
-    - Prompt nodes remain visible in comment rail during playback
-    - Currently playing response node is highlighted on the map in real-time
-    - **Simplified Navigation**: Only previous/next buttons available
-  - **Auto-play Option**: Setting to automatically start playing when question text is clicked
+  - Show all directly connected response nodes in the scrollable comment rail
+  - Brief overview/preview of each response node
+  - Enable quick navigation between response nodes. When you click on a response node in the comment rail, it zooms into that one and goes into the single node view
+  - when you hover over a node in the comment rail, it is temporarily highlighted on the map
+  - **Audio Playback**: Random "shuffle" playback button that plays one connected response node at a time
   - Reference: [Figma Frame 4-3428](https://www.figma.com/design/3RRAJtxVKX0kbSZT8ouJWa/Anthology-III?node-id=4-3428&t=JN4qdlt1xDfI1Af0-4)
-
-**Multi-Node View**
-- Display abridged versions of all selected nodes (unlimited capacity)
-- Accommodate any number of selected nodes via scrolling
-- "Click for full text" expansion capability for each node, which opens individual node view.
-- Efficient scrollable container with smart space usage
-- **Selection Hierarchy** (non-cascading):
-  - Clicking a prompt node: Selects ONLY response nodes directly attached to that prompt (no further cascading)
-  - Clicking a question node: Selects ONLY prompt nodes directly attached to that question (responses NOT included)
-  - No automatic cascade: Each click selects only one level of the hierarchy
-- Intelligent grouping: Automatically organizes related nodes visually in the rail
-- **Audio Playback**: When prompt node clicked, plays connected response nodes in chronological order
 
 #### Interface Features
 - **Responsive Layout**: Adapts to different screen sizes and orientations
@@ -119,95 +113,113 @@ testing
 - **Audio Playback Controls**: Integrated audio player for nodes with associated audio
 - **Scalable Multi-Node Handling**:
   - Virtualized scrolling for performance with hundreds of selected nodes
-  - Compact card view for large selections (showing speaker name and first line)
-  - Smart grouping by parent node (responses grouped under their prompt)
-  - Filter/sort options: By speaker or conversation
-  - Batch operations: Play all selected audio, export selected text, etc.
+  - Compact card view for large selections (showing speaker name and first line, along with a view more text)
+  - Smart grouping by parent node (responses grouped under their question)
 
 ### 3. Audio Playback System
 
-#### Audio Player Components
+#### Unified Audio Playback Logic
 
-**Play Button Design**
-- **Big Medley / Summary Button**:
-  - Rectangular play/pause button with standard media icons and time display
-  - Displays countdown timer counting seconds until end of excerpt
-  - Located prominently in the comment rail when viewing nodes with audio
-  - Fills container width
-  - Visual states: idle, playing, paused
-  - Progress indicator showing current position in audio, can act as timeline scrubber for seeking
-  - Reference: [Figma Frame 4-3428](https://www.figma.com/design/3RRAJtxVKX0kbSZT8ouJWa/Anthology-III?node-id=4-3428&t=JN4qdlt1xDfI1Af0-4)
+**Core Playback Behaviors**:
+- **Single Response Node View**:
+  - Plays only the specific timestamped audio segment (audio_start to audio_end) of parent conversation
+  - Shows individual play/pause button with progress indicator
+  - Highlights only that node on the map during playback
 
-- **Individual Node Play Button**:
-  - Small ectangular play/pause button with standard media icons and time display
-  - Visual states: idle, playing, paused
-  - Displays countdown timer counting seconds until end of excerpt
-  - Progress indicator showing current position in audio, can act as timeline scrubber for seeking
-    - Reference: [Figma Frame 4-3428](https://www.figma.com/design/3RRAJtxVKX0kbSZT8ouJWa/Anthology-III?node-id=4-3428&t=JN4qdlt1xDfI1Af0-4)
+- **Question Node View**:
+  - Random "shuffle" button that plays one connected response at a time
+  - Each click plays a different random response from connected nodes
+  - Does NOT auto-advance to next response - requires manual click for each
+  - Currently playing response is highlighted on the map
 
+**Audio Controls**:
+- **Play/Pause Button**:
+  - Toggles between play and pause states
+  - Shows current playback state with standard media icons
 
-**Audio-Text Synchronization**
-- **Highlight System**:
-  - Currently playing node highlighted on the map (all other nodes are faded to 50% opacity)
-  - Currently playing text segment highlighted in comment rail
-  - Smooth scrolling to keep current audio position in view
-- **Node Highlighting Logic**:
-  - Single response node playback: Only that node highlighted
-  - Prompt node playlist: Highlight changes dynamically as audio moves from prompt to each response
-  - Highlight transitions smoothly between nodes based on audio timestamps
-- **Interaction**:
-  - Click on text to jump to that position in audio
-  - Audio continues when selecting different nodes (optional setting)
-  - Queue system for playing multiple nodes sequentially
+- **Progress Indicator**:
+  - Visual bar showing current position within audio segment
+  - Displays time remaining in countdown format
+  - Acts as scrubber for seeking within the segment
+  - Updates in real-time during playback
+
+**Visual Feedback During Playback**:
+- **Map Highlighting**:
+  - Currently playing node shown at full opacity
+  - All other nodes fade to 50% opacity
+  - Smooth transitions between node highlights
+
+- **Comment Rail Sync**:
+  - Playing text segment highlighted in rail, word by word
+  - Word-level highlighting: Each word from word-timestamped transcript JSON (containing text, start/end timestamps in milliseconds, speaker, confidence) is highlighted when audio playback time matches that word's timestamp range
+  - Continuous time matching: Audio player's current time (in milliseconds) is compared against each word's start/end range to determine which word to highlight
+  - Auto-scrolls to keep current content in view
+  - Visual indicator of active playback state
 
 #### Audio Data Management
 
-**Audio File Handling**
+**Audio File Handling**:
 - Support for common formats: MP3, WAV, M4A, OGG
 - Streaming capability for large audio files
 - Preloading strategy for smooth playback
 - Fallback for unsupported formats
 
-**Timestamp Precision**
-- Millisecond-level precision for audio start/end times
-- Support for overlapping audio segments
-- Graceful handling of gaps between segments
+**Playback State Management**:
+- Each node references its parent conversation's audio file
+- Multiple conversations supported (each with its own audio file)
 
-**Conversation Playlist Management**
-- **Playback Behavior by Node Type**:
-  - **Individual Response Node**: Plays only that specific audio segment (audio_start to audio_end)
-  - **Prompt Node**: Creates chronological playlist of directly connected response nodes
-  - **Question Node**: Creates randomized playlist of all connected response nodes
-- **Playlist Generation**:
-  - Prompt node click → Chronological playlist of directly connected responses (sorted by audio_start timestamp)
-  - Question node click → Random playlist creation from all connected responses (via question → prompt → response path)
-  - Question playlist plays responses in random order (not chronological)
-  - Each node references its parent conversation's audio file
-  - Multiple conversations supported (each with its own audio file)
-- **Dynamic Node Highlighting**:
-  - As audio plays through playlist, the currently playing node gets highlighted on the map
-  - Highlight transitions occur at timestamp boundaries (prompt → response1 → response2, etc.)
-  - Visual feedback shows which specific node's audio is currently playing
-  - Comment rail scrolls to keep currently playing node's text in view
-- **Playback Continuity**:
-  - Gapless transitions between nodes based on timestamps
-  - Memory of playback position if user navigates away and returns
-  - Handles timestamp gaps gracefully (skip)
+### 4. Multi-Conversation Color System
 
-### 4. Data Processing Pipeline
+The system supports displaying multiple conversations simultaneously on the same map, with each conversation differentiated by a unique color. This visual distinction helps users understand relationships and navigate between different narrative threads.
+
+**Automatic Color Assignment (Default)**
+- **Predefined Palette**: Uses a curated set of 10-15 visually distinct colors optimized for accessibility. If a conversation set does not already have a color, it will be assigned a unique one
+- Colors assigned in order as conversations are loaded
+- **Collision Prevention**: Ensure that no two conversations share the same color
+
+#### Visuals 
+
+**Response Node Coloring**
+- **Response Nodes**:
+  - Fill color uses assigned conversation color
+  - Pull quote rectangles use color as background with adjusted opacity
+- **Question Nodes**:
+  - Text color remains black
+
+- Edges inherit color from source conversation of child response node
+
+**Selection States**
+- **Selected**: Full saturation and opacity
+- **Unselected (same conversation)**: 70% opacity
+- **Unselected (different conversation)**: 40% opacity
+- **Playing**: Full saturation and opacity (state does not change from selected)
+
+### 5. Data Processing Pipeline
+
+#### Decoupled Architecture
+**Design Principle**: The system uses an adapter pattern to decouple the input JSON structure from the internal data representation. Json formatting and organization will be handled in a seperate program
 
 #### Input Handling
 **Supported Input Formats**:
 - JSON files with various configurations
 - Plain text files (.txt)
 - Future extensibility for other formats
+- Seperate system will convert audio and transcripts into the correct format
 
 **Processing Workflow**:
 1. Accept raw input file (JSON or TXT)
-2. Utilize LLM for intelligent parsing and structuring
-3. Convert to standardized internal JSON format
-4. Validate data integrity and relationships
-5. Generate visualization-ready data structure
+2. Apply format-specific adapter/transformer
+3. Utilize LLM for intelligent parsing and structuring (if needed)
+4. Convert to standardized internal data model
+
+
+
+5. Validate data integrity and relationships (we want in our program + graceful error handling)
+
+
+
+6. Generate visualization-ready data structure
+
 
 #### Data Schema
 
@@ -217,19 +229,21 @@ testing
   "conversation_id": unique_identifier,
   "audio_file": string (URL or file path to conversation audio),
   "duration": number (total duration in milliseconds),
+  "color": string (hex color value, e.g., "#FF6B6B"),
   "metadata": {
     "title": string (optional),
     "date": string (optional),
-    "participants": [array of speaker names]
+    "participants": [array of speaker names],
+    "color_scheme": string (optional - predefined theme name)
   }
 }
 ```
 
-**Excerpt Node Structure**:
+**Response Node Structure**:
 ```
 {
-  "type": "prompt" | "response",
-  "responds_to": [node_id],
+  "type": "response" | "prompt",  // Node type determines visibility and interaction
+  "responds_to": question_node_id,
   "speaker_name": string,
   "speaker_text": string,
   "pull_quote": string (optional - if present, node displays as rectangle with this text),
@@ -240,32 +254,46 @@ testing
 }
 ```
 
-**Pull Quote Visualization**:
-- When `pull_quote` field is present: Node renders as a rectangle displaying the pull_quote text
-- When `pull_quote` field is absent: Node renders as standard shape (circle for response, square for prompt)
-- Pull quote rectangles maintain same interaction behaviors as standard nodes (clickable, selectable, audio playback)
+
+**Node Type Behavior**:
+- **type: "response"**: Full visualization and interaction enabled
+  - Displayed on map as circle or if pull_quote present, rectangle
+  - Clickable and selectable
+  - Shows in comment rail
+  - Audio playback enabled
+- **type: "prompt"**: Data storage only, no visualization
+  - Not displayed on map
+  - Not selectable or clickable
+  - Not shown in comment rail
+  - No audio playback
+  - Preserved in data structure for context/processing
 
 **Question Node Structure**:
 ```
 {
   "type": "question",
   "question_text": string,
-  "related_prompts": [array of prompt node IDs],
-  "id": unique_identifier
+  "related_responses": [array of response node IDs],  // Only includes type:"response" nodes
+  "id": unique_identifier,
+  "path_to_recording": string
 }
 ```
 
 ## User Interaction Patterns
 
 ### Navigation
-- **Click Selection** (Single-Level Hierarchy):
-  - Click response node (circle): Selects ONLY that response + displays in comment rail + plays individual audio segment (new clicks replace previous selection)
-  - Click prompt node (square): Selects ONLY its direct response nodes (not other prompts/questions) + displays responses in rail + plays responses in chronological order 
-  - Click question text: Selects ONLY its direct prompt nodes (not the prompts' responses) + displays prompts in rail + randomized audio playlist option 
+- **Initial State**:
+  - Page loads with Initial Conversations View in comment rail
+  - All questions displayed as clickable list
+  - Map shows full visualization at default zoom level
+- **Click Selection**:
+  - Click question in Initial Conversations View: Zooms in on question + transitions to Question Node View
+  - Click response node (circle): Selects ONLY that response + displays in comment rail with play button for individual audio segment
+  - Click question text on map, or comment rail (in Conversations View): Shows all directly connected response nodes + displays responses in rail with shuffle button for random playback
+  - Click empty map space: Deselects all + returns to Initial Conversations View (without zooming out)
 - **Audio Behavior Summary**:
-  - Response nodes → Play individual segment only
-  - Prompt nodes → Chronological playlist of directly connected responses
-  - Question nodes → Random playlist of all connected responses
+  - Response nodes → Play individual segment only (timestamped portion)
+  - Question nodes → Shuffle button plays one random connected response per click
   - Currently playing node highlighted on map in real-time
 - **Zoom Controls**:
   - Smooth zoom in/out to explore the map at different scales
@@ -275,14 +303,9 @@ testing
 
 ### Information Architecture
 - **Full Visibility**: All nodes visible at all zoom levels for complete context
-- **Context Preservation**: Maintain user's place in the narrative
-- **Multi-path Exploration**: Allow non-linear story navigation
+- **Multi-path Exploration**: Allow story navigation to happen from either comment rail or map, maintaing cogent state throughout
+- **Three-Mode System**: Initial Conversations View (home) ↔ Question Node View ↔ Single Node View
 
-- **Keyboard Shortcuts**:
-  - Space: Play/Pause
-  - Arrow keys: Skip forward/backward
-  - Shift+Arrow: Next/previous response in conversation
-  - Numbers 1-5: Jump to response N in current conversation
 
 ## Technical Considerations
 
@@ -292,17 +315,6 @@ testing
 - Quick response to user interactions
 - Optimize rendering for all visible nodes (no lazy loading based on zoom)
 
-### Scalability
-- Support for stories with varying complexity
-- Efficient memory management for large node networks
-- Performance optimization for rendering all nodes simultaneously
-
-### Accessibility
-- Keyboard navigation support
-- Screen reader compatibility
-- High contrast mode options
-- Text size adjustments
-
 ## Visual Design References
 
 The interface should follow the aesthetic and interaction patterns demonstrated in the Figma designs:
@@ -311,19 +323,6 @@ The interface should follow the aesthetic and interaction patterns demonstrated 
 - **Visual Map Layout**: [Frame 4-3496](https://www.figma.com/design/3RRAJtxVKX0kbSZT8ouJWa/Anthology-III?node-id=4-3496&t=JN4qdlt1xDfI1Af0-4)
 - **Multi-Comment Rail**: [Frame 4-3760](https://www.figma.com/design/3RRAJtxVKX0kbSZT8ouJWa/Anthology-III?node-id=4-3760&t=JN4qdlt1xDfI1Af0-4)
 
-## Future Enhancements (Not in MVP)
-
-### Planned Features
-- **Advanced Distance Logic**: Sophisticated algorithms for node positioning beyond basic force-directed graph
-- **Export Capabilities**: Save visualizations or story paths
-- **Collaborative Features**: Multi-user exploration
-- **Search and Filter**: Find specific content within the story network
-
-### Extensibility Considerations
-- Plugin architecture for custom node types
-- API for external data sources
-- Theming and customization options
-- Integration with other storytelling platforms
 
 ## Implementation Decisions
 
@@ -331,11 +330,9 @@ The interface should follow the aesthetic and interaction patterns demonstrated 
 - **Frontend Framework**: React
 - **Visualization Library**: D3.js for node rendering and interactions
 - **Graph Layout**: Force-directed graph algorithm for organic node positioning
-- **Zoom Implementation**: D3 zoom with semantic zoom for question text (constant size)
 - **State Management**: Zustand for centralized state management
-- **Styling**: CSS Modules or Styled Components for component styling
-- **Audio Playback**: Web Audio API with HTML5 audio element for controls
-- **Audio Libraries**: Howler.js or WaveSurfer.js for advanced audio features
+- **Styling**: CSS Modules or Styled Components for component styling. Make sure to reference figma first always, even to get context for new components
+- **Audio Playback**: Native HTML5 Audio API for all audio playback and control
 
 ### State Management Architecture (Zustand)
 
@@ -352,9 +349,10 @@ The interface should follow the aesthetic and interaction patterns demonstrated 
 Manages the main application state with logical separation of concerns:
 
 - **Data Slice**: Core data structures
-  - All nodes (questions, prompts, responses)
+  - All nodes (questions, responses)
   - Edge relationships between nodes
   - Conversation metadata and audio file references
+  - Conversation color assignments (Map<conversation_id, color>)
   - Processed and validated data from LLM pipeline
 
 - **Selection Slice**: User selection state
@@ -406,45 +404,13 @@ Manages complex user interactions:
 - Drag and drop state
 - Context menu state and options
 
-#### Bidirectional Data Flow Patterns
 
-**Map → Rail Flow**:
-1. User clicks node on map
-2. Map component calls store action
-3. Store updates selected nodes and rail display mode
-4. Rail component reacts to selection change
-5. Rail auto-scrolls to show selected content
-6. Audio queue updates if applicable
-
-**Rail → Map Flow**:
-1. User clicks node in comment rail
-2. Rail component calls store action
-3. Store updates selected nodes and map highlight
-4. Map component reacts to selection change
-5. Map pans/zooms to center selected node
-6. D3 force simulation adjusts if needed
-
-**Audio → Both Components**:
-1. Audio playback progresses
-2. Store updates current playing node
-3. Map highlights currently playing node with pulse effect
-4. Rail highlights corresponding text and scrolls
-5. Both components stay synchronized
-
-#### Performance Optimization Strategies
-
-- **Selective Subscriptions**: Components use selector functions to subscribe only to needed state slices
-- **Memoized Selectors**: Complex derived state (like connected nodes) cached until dependencies change
-- **Shallow Equality Checks**: Prevent unnecessary re-renders with shallow comparison
-- **Batched Updates**: Multiple rapid state changes batched into single update
-- **Lazy State Initialization**: Heavy computations deferred until needed
 
 #### State Persistence and Hydration
 
 - **Session Persistence**: Critical state (selections, audio position) saved to sessionStorage
-- **User Preferences**: Settings (if any) saved to localStorage
 - **URL State Sync**: Shareable states (selected nodes, zoom level) reflected in URL parameters
-- **Rehydration**: On app load, state restored from various sources in priority order
+- **Rehydration**: On app load, state restored
 
 #### DevTools Integration
 
@@ -455,30 +421,20 @@ Manages complex user interactions:
 
 ### UI/UX Specifications
 - **Comment Rail**: Adjustable right sidebar (resizable 20-50% width), map occupies remaining space; responsive breakpoints for mobile/tablet/desktop
-- **Selection Behavior** (Non-Cascading Hierarchy):
-  - **Single-Level Selection Rule**: Each click selects only one level of the hierarchy
-  - **Prompt nodes**: Clicking selects ONLY its direct response nodes (no cascade to other levels)
-  - **Question nodes**: Clicking selects ONLY its direct prompt nodes (responses remain unselected)
+- **Selection Behavior**:
+  - **Question nodes**: Clicking shows all directly connected response nodes
   - **Response nodes**: Clicking selects only that individual response
-  - **No Automatic Cascade**: Selection never automatically propagates beyond the immediate children
   - **Single Selection**: Each new click replaces the previous selection
-  - **Clear selection**: Click on empty map space or use Clear button in comment rail
+  - **Clear selection**: Click on empty map space
 - **Node Display**:
-  - Excerpt nodes: Circles
+  - Response nodes: Circles (or rectangles for pull quotes)
   - Question nodes: Text-only display without visible node markers
 - **Animation Priority**: Smooth transitions for zoom, pan, and node selection
 - **Visual Feedback**: Hover states, selection highlights, and smooth morphing
 
 - **Audio Visual Integration**:
   - Play button prominently displayed when node has audio
-  - Waveform visualization (optional) showing audio timeline
   - Text highlights sync with audio playback position
-  - Mini player mode when comment rail is minimized
-
-### Data Processing
-- **LLM Integration**: Claude API (Anthropic) for intelligent data parsing
-- **Processing Flow**: Client uploads file → Server sends to Claude → Structured JSON returned → Visualization rendered
-- **Error Handling**: Validation and user feedback for malformed data
 
 ## Summary
 
