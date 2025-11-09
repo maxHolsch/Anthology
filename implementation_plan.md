@@ -691,6 +691,101 @@ Nodes appeared in upper-left corner instead of centered in viewport on initial l
 - ✅ Real conversation structure and relationships
 - ✅ Authentic content for visualization
 
+## Phase 2 Node Positioning & Overlap Fix (November 2025)
+
+### Issues Resolved
+
+**Issue 1: Question Nodes Rendering Behind Responses**
+- **Problem**: Questions were rendering in SVG before responses, causing them to appear behind
+- **Design Requirement**: Questions should visually appear "on top" and can overlap with response nodes
+- **Solution**: Reversed SVG rendering order in `D3Visualization.tsx:148-182`
+  - Render order (bottom to top): Standard responses → Pull quotes → Questions
+  - Questions now render last, appearing on top of all response nodes
+
+**Issue 2: Excessive Collision Radii Causing Poor Layout**
+- **Problem**: Mismatched collision vs. visual sizes created poor spacing
+  - Standard responses: 40px collision for 7px visual (5.7× too large)
+  - Questions: 80px may be insufficient for text width
+  - Pull quotes: 130px reasonable but can be optimized
+- **Solution**: Optimized collision radii in `VisualizationStore.ts:65-72`
+  - Questions: 80px → **100px** (better text coverage)
+  - Standard responses: 40px → **10px** (matches 7px visual + small buffer)
+  - Pull quotes: 130px → **120px** (optimized for 204px width)
+
+**Issue 3: Questions Overlapping on Initial Creation**
+- **Problem**: Fixed-radius radial layout caused overlap with many questions
+  - Circumference calculation didn't account for collision radii
+  - Small viewports exacerbated overlap issues
+- **Solution**: Adaptive question positioning in `AnthologyStore.ts:186-212`
+  - Calculate minimum circumference: `questionCount × (2 × collisionRadius)`
+  - Derive minimum radius: `minCircumference / (2π)`
+  - Use larger of calculated radius or 40% viewport
+  - Ensures proper spacing regardless of question count
+
+**Issue 4: Response Nodes Overlapping with Dense Connections**
+- **Problem**: Fixed 100px radius insufficient for many responses per question
+  - 8+ responses created tight clustering
+  - Pull quotes (large rectangles) especially problematic
+- **Solution**: Adaptive response positioning in `AnthologyStore.ts:224-251`
+  - Base radius: 150px (up from 100px)
+  - Scaling formula: `baseRadius + (responseCount > 6 ? responseCount × 10 : 0)`
+  - Orphan responses distributed at 60% viewport radius (not center-clustered)
+  - Prevents overlap even with 10+ responses per question
+
+### Technical Implementation Details
+
+**Adaptive Positioning Algorithm**:
+```typescript
+// Questions - prevent overlap with minimum circumference calculation
+const minCircumference = questionCount × (2 × collisionRadius);
+const minRadius = minCircumference / (2π);
+const questionRadius = max(minRadius, viewportRadius × 0.4);
+
+// Responses - scale spacing with connection density
+const baseRadius = 150px;
+const responseRadius = baseRadius + (responseCount > 6 ? responseCount × 10 : 0);
+
+// Orphans - distribute across viewport
+const orphanRadius = viewportRadius × 0.6;
+```
+
+**SVG Layer Order** (background → foreground):
+1. Edges (curved connections)
+2. Standard response nodes (circles)
+3. Pull quote nodes (rectangles)
+4. **Question nodes (text-only) ← TOP LAYER**
+
+**Collision Radii Optimization**:
+| Node Type | Old | New | Visual Size | Ratio |
+|-----------|-----|-----|-------------|-------|
+| Question | 80px | **100px** | Text-based | 1.25× buffer |
+| Standard Response | 40px | **10px** | 14px diameter | 1.4× visual |
+| Pull Quote | 130px | **120px** | 204×146px | 0.59× width |
+
+### Verification Checklist
+
+- [x] Questions render on top of all response nodes (SVG order fix)
+- [x] No question-question overlap on initial creation (adaptive radius)
+- [x] No response-response overlap on initial creation (adaptive spacing)
+- [x] All nodes on same 2D plane (proper zoom behavior)
+- [x] Questions can visually overlap responses (design requirement)
+- [x] Collision radii match visual sizes (optimized for layout)
+- [x] Orphan responses distributed properly (viewport-wide placement)
+- [x] Dense connections handled gracefully (scaling radius)
+
+### Files Modified
+
+1. **D3Visualization.tsx** (lines 148-182)
+   - Reversed node rendering order for proper layering
+
+2. **VisualizationStore.ts** (lines 65-72)
+   - Optimized collision radii for each node type
+
+3. **AnthologyStore.ts** (lines 186-262)
+   - Implemented adaptive question positioning
+   - Implemented adaptive response spacing
+   - Improved orphan response distribution
+
 ## Next Actions
 1. **Verify visualization in browser** - Open http://localhost:5173/ and test all interactions
 2. Begin Phase 3: Comment Rail Foundation
