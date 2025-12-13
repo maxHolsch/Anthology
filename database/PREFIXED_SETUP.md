@@ -51,10 +51,35 @@ anthology_word_timestamps
 # 1. In Supabase Dashboard, go to Storage
 
 # 2. Click "New bucket"
-#    Name: recordings
+#    Name: Recordings
 #    Public: YES
 #    Click "Create bucket"
 ```
+
+### Step 2b: Allow uploads from the frontend (anon key)
+
+When uploading from the browser, Supabase Storage enforces RLS policies on `storage.objects`.
+
+If you see:
+
+- `StorageApiError: new row violates row-level security policy`
+
+Run the SQL in [`storage_policies_recordings.sql`](database/storage_policies_recordings.sql:1) via Supabase Dashboard → SQL Editor.
+
+### Step 2c: Allow creating DB rows from the frontend (anon key)
+
+Uploading to Storage is only half of the flow—after upload, the app inserts rows into:
+
+- `anthology_recordings`
+- `anthology_speakers` (auto-created for new respondent names)
+- `anthology_responses`
+
+If you see errors like:
+
+- `401 Unauthorized` calling `rest/v1/anthology_recordings`
+- `new row violates row-level security policy for table "anthology_recordings"`
+
+Run the SQL in [`rls_public_write_policies_prefixed.sql`](database/rls_public_write_policies_prefixed.sql:1) via Supabase Dashboard → SQL Editor.
 
 ---
 
@@ -215,7 +240,7 @@ ORDER BY r.turn_number;
 -- Insert a test recording
 INSERT INTO anthology_recordings (file_path, file_name, duration_ms)
 VALUES
-  ('https://enokfgiwbgianwblplcn.supabase.co/storage/v1/object/public/recordings/test.mp3',
+  ('https://enokfgiwbgianwblplcn.supabase.co/storage/v1/object/public/Recordings/test.mp3',
    'test.mp3',
    180000);
 
@@ -226,7 +251,7 @@ SELECT id FROM anthology_recordings WHERE file_name = 'test.mp3';
 ### 2. Upload via Supabase Storage
 
 ```bash
-# 1. Go to Storage → recordings bucket
+# 1. Go to Storage → Recordings bucket
 # 2. Click "Upload file"
 # 3. Select your MP3
 # 4. Copy the public URL
