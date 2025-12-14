@@ -51,7 +51,7 @@ ORDER BY table_name;
 # 2. Click "New bucket"
 
 # 3. Settings:
-#    Name: recordings
+#    Name: Recordings
 #    Public bucket: YES (toggle on)
 #    File size limit: 50 MB
 #    Allowed MIME types: Leave empty (allows all)
@@ -336,6 +336,8 @@ LIMIT 10;
 - Advanced querying
 
 ---
+
+Canonical guide: [`database/DATABASE.md`](database/DATABASE.md:1)
 
 **You're done!** Your data is now in Supabase. 🎉
 

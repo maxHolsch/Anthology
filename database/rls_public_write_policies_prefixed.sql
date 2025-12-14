@@ -31,4 +31,12 @@ for insert
 to public
 with check (true);
 
+-- Word timestamps: allow posting karaoke word timing rows for newly-created responses
+drop policy if exists "Public insert access" on anthology_word_timestamps;
+create policy "Public insert access"
+on anthology_word_timestamps
+for insert
+to public
+with check (true);
+
 -- Optional: if you later support editing/deleting, add UPDATE/DELETE policies as needed.

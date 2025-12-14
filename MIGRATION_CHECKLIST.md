@@ -19,7 +19,7 @@ Quick checklist for migrating Anthology to Supabase.
 
 ### 2. Storage Setup
 - [ ] Go to Storage in Supabase Dashboard
-- [ ] Create bucket named "recordings"
+- [ ] Create bucket named "Recordings" (case-sensitive)
 - [ ] Set to public access
 - [ ] Verify bucket created
 
