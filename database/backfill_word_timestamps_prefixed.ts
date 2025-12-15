@@ -73,14 +73,38 @@ function parseArgs(argv: string[]) {
   const args = argv.slice(2);
   const flags = new Set(args.filter((a) => a.startsWith('--')));
   const jsonPath = args.find((a) => !a.startsWith('--')) || './anthology-app/public/6798_phase2_3_template.json';
+  const anthologySlug =
+    (args.find((a) => a.startsWith('--anthology-slug='))?.split('=')[1] ||
+      process.env.ANTHOLOGY_SLUG ||
+      'default').trim();
   return {
     jsonPath,
     dryRun: flags.has('--dry-run'),
+    anthologySlug,
   };
 }
 
+async function ensureAnthology(supabase: any, slug: string): Promise<{ id: string; slug: string }>{
+  const { data: existing, error: selErr } = await supabase
+    .from('anthology_anthologies')
+    .select('id, slug')
+    .eq('slug', slug)
+    .maybeSingle();
+
+  if (selErr) throw selErr;
+  if (existing?.id) return existing;
+
+  const { data: created, error: insErr } = await supabase
+    .from('anthology_anthologies')
+    .insert({ slug, title: slug, metadata: { source: 'word_backfill' } })
+    .select('id, slug')
+    .single();
+  if (insErr) throw insErr;
+  return created;
+}
+
 async function main() {
-  const { jsonPath, dryRun } = parseArgs(process.argv);
+  const { jsonPath, dryRun, anthologySlug } = parseArgs(process.argv);
 
   await loadEnv();
 
@@ -97,9 +121,12 @@ async function main() {
     auth: { persistSession: false, autoRefreshToken: false },
   });
 
+  const anthology = await ensureAnthology(supabase, anthologySlug);
+
   console.log('🎤 Backfilling karaoke word timestamps (prefixed tables)');
   console.log(`📄 Source: ${jsonPath}`);
   console.log(`🗄️  Target: ${SUPABASE_URL}`);
+  console.log(`🏷️  Anthology: ${anthology.slug} (${anthology.id})`);
   console.log(`🧪 Mode: ${dryRun ? 'DRY RUN (no writes)' : 'WRITE'}`);
 
   const jsonContent = await fs.readFile(jsonPath, 'utf-8');
@@ -120,6 +147,7 @@ async function main() {
     const { data, error } = await supabase
       .from('anthology_responses')
       .select('id, legacy_id')
+      .eq('anthology_id', anthology.id)
       .in('legacy_id', ids);
 
     if (error) {
@@ -207,7 +235,7 @@ async function main() {
     "   select r.legacy_id, count(w.id) as words\n" +
       "   from anthology_responses r\n" +
       "   left join anthology_word_timestamps w on w.response_id = r.id\n" +
-      "   where r.legacy_id = 'r_002'\n" +
+      `   where r.anthology_id = '${anthology.id}' and r.legacy_id = 'r_002'\n` +
       "   group by r.legacy_id;"
   );
 }

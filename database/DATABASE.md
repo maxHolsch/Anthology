@@ -4,16 +4,19 @@ This document is the **single source of truth** for Anthology’s database.
 
 This project uses **prefixed tables** in Supabase (Postgres) with the `anthology_` prefix.
 
+This project also supports **multiple anthologies** (multiple independent datasets) in the same Supabase project via the top-level table [`anthology_anthologies`](database/schema_prefixed.sql:15) and `anthology_id` foreign keys.
+
 ## Canonical table set
 
 ```
-anthology_recordings
-anthology_conversations
-anthology_conversation_recordings
-anthology_speakers
-anthology_questions
-anthology_responses
-anthology_word_timestamps
+ anthology_anthologies
+ anthology_recordings
+ anthology_conversations
+ anthology_conversation_recordings
+ anthology_speakers
+ anthology_questions
+ anthology_responses
+ anthology_word_timestamps
 ```
 
 ## Repository map
@@ -83,6 +86,17 @@ Supabase Dashboard → SQL Editor:
 2. Paste into SQL Editor
 3. Run
 
+### Existing projects: add multi-anthology support
+
+If you already have data and want to partition it into multiple anthologies:
+
+1. Run the migration SQL: [`2025-12-14_add_anthologies.sql`](database/migrations/2025-12-14_add_anthologies.sql:1)
+2. Your existing rows will be assigned to the `default` anthology slug.
+
+Key behavior change:
+
+- `legacy_id` values are now unique **per anthology**, not globally.
+
 ### 3) Create Storage bucket
 
 Supabase Dashboard → Storage:
@@ -102,7 +116,19 @@ From repo root:
 
 ```bash
 npm install @supabase/supabase-js
-npx tsx database/migrate_json_to_sql_prefixed.ts anthology-app/public/6798_phase2_3_template.json
+ANTHOLOGY_SLUG=default npx tsx database/migrate_json_to_sql_prefixed.ts anthology-app/public/6798_phase2_3_template.json
+```
+
+Importing a second, separate dataset into the same Supabase project:
+
+```bash
+ANTHOLOGY_SLUG=my-second-anthology npx tsx database/migrate_json_to_sql_prefixed.ts path/to/other_anthology.json
+```
+
+Backfilling word timestamps for a specific anthology:
+
+```bash
+ANTHOLOGY_SLUG=my-second-anthology npx --yes tsx database/backfill_word_timestamps_prefixed.ts path/to/other_anthology.json
 ```
 
 ## Frontend: loading graph data
@@ -128,6 +154,36 @@ const data = await GraphDataService.loadAll();
   See canonicalization inside [`GraphDataService.loadAll()`](anthology-app/src/services/supabase.ts:594).
 
 ## Troubleshooting
+
+## Verification queries (use in Supabase SQL editor)
+
+List anthologies + conversation counts:
+
+```sql
+select
+  a.id,
+  a.slug,
+  a.title,
+  count(c.id) as conversation_count
+from anthology_anthologies a
+left join anthology_conversations c on c.anthology_id = a.id
+group by a.id, a.slug, a.title
+order by a.created_at desc;
+```
+
+Quick sanity check for a single anthology:
+
+```sql
+-- replace with your slug
+with target as (
+  select id from anthology_anthologies where slug = 'default'
+)
+select
+  (select count(*) from anthology_conversations c join target t on c.anthology_id = t.id) as conversations,
+  (select count(*) from anthology_questions q join target t on q.anthology_id = t.id) as questions,
+  (select count(*) from anthology_responses r join target t on r.anthology_id = t.id) as responses,
+  (select count(*) from anthology_speakers s join target t on s.anthology_id = t.id) as speakers;
+```
 
 ### Bucket name issues
 

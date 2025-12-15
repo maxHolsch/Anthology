@@ -98,11 +98,50 @@ interface JsonData {
 
 // Note: Supabase client will be created after loading env vars
 
+type AnthologyRow = {
+  id: string;
+  slug: string;
+  title: string;
+};
+
+async function ensureAnthology(supabase: any, slug: string, title?: string): Promise<AnthologyRow> {
+  // Try fetch first
+  const { data: existing, error: selErr } = await supabase
+    .from('anthology_anthologies')
+    .select('id, slug, title')
+    .eq('slug', slug)
+    .maybeSingle();
+
+  if (selErr) {
+    throw selErr;
+  }
+
+  if (existing?.id) {
+    return existing as AnthologyRow;
+  }
+
+  const { data: created, error: insErr } = await supabase
+    .from('anthology_anthologies')
+    .insert({
+      slug,
+      title: title || slug,
+      metadata: { source: 'json_migration' },
+    })
+    .select('id, slug, title')
+    .single();
+
+  if (insErr) {
+    throw insErr;
+  }
+
+  return created as AnthologyRow;
+}
+
 // ============================================
 // MIGRATION FUNCTIONS
 // ============================================
 
-async function migrateRecordings(conversations: JsonConversation[], supabase: any) {
+async function migrateRecordings(conversations: JsonConversation[], anthologyId: string, supabase: any) {
   console.log('\n📀 Migrating recordings...');
 
   const recordingMap = new Map<string, string>(); // audio_file -> uuid
@@ -119,6 +158,7 @@ async function migrateRecordings(conversations: JsonConversation[], supabase: an
     const { data, error } = await supabase
       .from('anthology_recordings')
       .insert({
+        anthology_id: anthologyId,
         file_path: audio_file,
         file_name: fileName,
         duration_ms: duration,
@@ -145,6 +185,7 @@ async function migrateRecordings(conversations: JsonConversation[], supabase: an
 
 async function migrateConversations(
   conversations: JsonConversation[],
+  anthologyId: string,
   recordingMap: Map<string, string>,
   supabase: any
 ) {
@@ -158,6 +199,7 @@ async function migrateConversations(
     const { data, error } = await supabase
       .from('anthology_conversations')
       .insert({
+        anthology_id: anthologyId,
         legacy_id: conversation_id,
         title: metadata.title,
         date: metadata.date,
@@ -202,6 +244,7 @@ async function migrateConversations(
 
 async function migrateSpeakers(
   conversations: JsonConversation[],
+  anthologyId: string,
   conversationMap: Map<string, string>,
   supabase: any
 ) {
@@ -219,6 +262,7 @@ async function migrateSpeakers(
       const { data, error } = await supabase
         .from('anthology_speakers')
         .insert({
+          anthology_id: anthologyId,
           name: speakerName,
           conversation_id: conversationId,
           circle_color: colors.circle,
@@ -246,6 +290,7 @@ async function migrateSpeakers(
 
 async function migrateQuestions(
   questions: JsonQuestion[],
+  anthologyId: string,
   conversationMap: Map<string, string>,
   responses: JsonResponse[],
   supabase: any
@@ -274,6 +319,7 @@ async function migrateQuestions(
     const { data, error } = await supabase
       .from('anthology_questions')
       .insert({
+        anthology_id: anthologyId,
         legacy_id: q.id,
         conversation_id: conversationId,
         question_text: q.question_text,
@@ -301,6 +347,7 @@ async function migrateQuestions(
 
 async function migrateResponses(
   responses: JsonResponse[],
+  anthologyId: string,
   conversationMap: Map<string, string>,
   speakerMap: Map<string, string>,
   questionMap: Map<string, string>,
@@ -345,6 +392,7 @@ async function migrateResponses(
     const { data, error } = await supabase
       .from('anthology_responses')
       .insert({
+        anthology_id: anthologyId,
         legacy_id: r.id,
         conversation_id: conversationId,
         responds_to_question_id: respondsToQuestionId,
@@ -446,26 +494,37 @@ async function migrate(jsonFilePath: string) {
     const jsonContent = await fs.readFile(jsonFilePath, 'utf-8');
     const jsonData: JsonData = JSON.parse(jsonContent);
 
+    // Anthology selection
+    const anthologySlug = process.env.ANTHOLOGY_SLUG || 'default';
+    const inferredTitle = (() => {
+      const first = jsonData.conversations?.[0]?.metadata?.title;
+      return typeof first === 'string' && first.length > 0 ? first : anthologySlug;
+    })();
+
+    const anthology = await ensureAnthology(supabase, anthologySlug, inferredTitle);
+    console.log(`\n🏷️  Anthology: ${anthology.slug} (${anthology.id})`);
+
     console.log(`📊 Found:`);
     console.log(`   - ${jsonData.conversations.length} conversations`);
     console.log(`   - ${jsonData.questions.length} questions`);
     console.log(`   - ${jsonData.responses.length} responses`);
 
     // Step 1: Migrate recordings
-    const recordingMap = await migrateRecordings(jsonData.conversations, supabase);
+    const recordingMap = await migrateRecordings(jsonData.conversations, anthology.id, supabase);
 
     // Step 2: Migrate conversations
-    const conversationMap = await migrateConversations(jsonData.conversations, recordingMap, supabase);
+    const conversationMap = await migrateConversations(jsonData.conversations, anthology.id, recordingMap, supabase);
 
     // Step 3: Migrate speakers
-    const speakerMap = await migrateSpeakers(jsonData.conversations, conversationMap, supabase);
+    const speakerMap = await migrateSpeakers(jsonData.conversations, anthology.id, conversationMap, supabase);
 
     // Step 4: Migrate questions
-    const questionMap = await migrateQuestions(jsonData.questions, conversationMap, jsonData.responses, supabase);
+    const questionMap = await migrateQuestions(jsonData.questions, anthology.id, conversationMap, jsonData.responses, supabase);
 
     // Step 5: Migrate responses
     const responseMap = await migrateResponses(
       jsonData.responses,
+      anthology.id,
       conversationMap,
       speakerMap,
       questionMap,
@@ -498,6 +557,8 @@ async function migrate(jsonFilePath: string) {
 // ============================================
 
 const args = process.argv.slice(2);
-const jsonPath = args[0] || './anthology-app/public/6798_phase2_3_template.json';
+// Usage:
+//   ANTHOLOGY_SLUG=my-anthology npx tsx database/migrate_json_to_sql_prefixed.ts path/to/file.json
+const jsonPath = args.find((a) => !a.startsWith('--')) || './anthology-app/public/6798_phase2_3_template.json';
 
 migrate(jsonPath);

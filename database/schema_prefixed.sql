@@ -10,12 +10,32 @@
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 -- ============================================
+-- ANTHOLOGIES (top-level dataset partition)
+-- ============================================
+
+-- Anthologies: top-level collection of conversations ("a set of conversations")
+CREATE TABLE anthology_anthologies (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    slug TEXT NOT NULL,
+    title TEXT NOT NULL,
+    description TEXT,
+    is_public BOOLEAN NOT NULL DEFAULT TRUE,
+    metadata JSONB NOT NULL DEFAULT '{}',
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW(),
+    UNIQUE (slug)
+);
+
+-- ============================================
 -- CORE TABLES
 -- ============================================
 
 -- Recordings: Audio files that can be linked to conversations or individual nodes
 CREATE TABLE anthology_recordings (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+
+    -- Anthology partition (nullable to allow shared recordings if needed)
+    anthology_id UUID REFERENCES anthology_anthologies(id) ON DELETE SET NULL,
 
     -- File information
     file_path TEXT NOT NULL, -- e.g., "recordings/6798.mp3" or Supabase Storage URL
@@ -42,8 +62,11 @@ CREATE TABLE anthology_recordings (
 CREATE TABLE anthology_conversations (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
 
+    -- Anthology partition
+    anthology_id UUID NOT NULL REFERENCES anthology_anthologies(id) ON DELETE RESTRICT,
+
     -- Identifiers
-    legacy_id TEXT UNIQUE, -- e.g., "conv_ca766496" from JSON
+    legacy_id TEXT, -- e.g., "conv_ca766496" from JSON
 
     -- Basic info
     title TEXT NOT NULL,
@@ -70,6 +93,11 @@ CREATE TABLE anthology_conversations (
     CONSTRAINT valid_color CHECK (color ~ '^#[0-9A-Fa-f]{6}$')
 );
 
+-- legacy_id may repeat across different anthologies
+CREATE UNIQUE INDEX idx_anthology_conversations_anthology_legacy_id
+  ON anthology_conversations(anthology_id, legacy_id)
+  WHERE legacy_id IS NOT NULL;
+
 -- Conversation Recordings: Link conversations to their primary/related recordings
 CREATE TABLE anthology_conversation_recordings (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -89,6 +117,9 @@ CREATE TABLE anthology_conversation_recordings (
 -- Speakers: Participants with color assignments
 CREATE TABLE anthology_speakers (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+
+    -- Anthology partition (denormalized for easy filtering / RLS)
+    anthology_id UUID NOT NULL REFERENCES anthology_anthologies(id) ON DELETE RESTRICT,
 
     -- Identity
     name TEXT NOT NULL,
@@ -116,8 +147,11 @@ CREATE TABLE anthology_speakers (
 CREATE TABLE anthology_questions (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
 
+    -- Anthology partition (denormalized for easy filtering / unique legacy_id per anthology)
+    anthology_id UUID NOT NULL REFERENCES anthology_anthologies(id) ON DELETE RESTRICT,
+
     -- Identifiers
-    legacy_id TEXT UNIQUE, -- e.g., "q_001" from JSON
+    legacy_id TEXT, -- e.g., "q_001" from JSON
     conversation_id UUID NOT NULL REFERENCES anthology_conversations(id) ON DELETE CASCADE,
 
     -- Content
@@ -143,12 +177,19 @@ CREATE TABLE anthology_questions (
     )
 );
 
+CREATE UNIQUE INDEX idx_anthology_questions_anthology_legacy_id
+  ON anthology_questions(anthology_id, legacy_id)
+  WHERE legacy_id IS NOT NULL;
+
 -- Responses: Response nodes in the visualization
 CREATE TABLE anthology_responses (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
 
+    -- Anthology partition (denormalized for easy filtering / unique legacy_id per anthology)
+    anthology_id UUID NOT NULL REFERENCES anthology_anthologies(id) ON DELETE RESTRICT,
+
     -- Identifiers
-    legacy_id TEXT UNIQUE, -- e.g., "r_002" from JSON
+    legacy_id TEXT, -- e.g., "r_002" from JSON
     conversation_id UUID NOT NULL REFERENCES anthology_conversations(id) ON DELETE CASCADE,
 
     -- Relationships
@@ -187,6 +228,10 @@ CREATE TABLE anthology_responses (
     )
 );
 
+CREATE UNIQUE INDEX idx_anthology_responses_anthology_legacy_id
+  ON anthology_responses(anthology_id, legacy_id)
+  WHERE legacy_id IS NOT NULL;
+
 -- Word Timestamps: For karaoke-style highlighting (Design.md line 158)
 CREATE TABLE anthology_word_timestamps (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -219,12 +264,17 @@ CREATE TABLE anthology_word_timestamps (
 -- INDEXES FOR PERFORMANCE
 -- ============================================
 
+-- Anthologies
+CREATE INDEX idx_anthology_anthologies_created_at ON anthology_anthologies(created_at DESC);
+
 -- Recordings
 CREATE INDEX idx_anthology_recordings_file_path ON anthology_recordings(file_path);
 CREATE INDEX idx_anthology_recordings_created_at ON anthology_recordings(created_at DESC);
+CREATE INDEX idx_anthology_recordings_anthology_id ON anthology_recordings(anthology_id);
 
 -- Conversations
 CREATE INDEX idx_anthology_conversations_legacy_id ON anthology_conversations(legacy_id);
+CREATE INDEX idx_anthology_conversations_anthology_id ON anthology_conversations(anthology_id);
 CREATE INDEX idx_anthology_conversations_date ON anthology_conversations(date DESC);
 CREATE INDEX idx_anthology_conversations_created_at ON anthology_conversations(created_at DESC);
 
@@ -236,11 +286,13 @@ CREATE INDEX idx_anthology_conversation_recordings_primary ON anthology_conversa
 -- Speakers
 CREATE INDEX idx_anthology_speakers_conversation ON anthology_speakers(conversation_id);
 CREATE INDEX idx_anthology_speakers_name ON anthology_speakers(name);
+CREATE INDEX idx_anthology_speakers_anthology_id ON anthology_speakers(anthology_id);
 
 -- Questions
 CREATE INDEX idx_anthology_questions_legacy_id ON anthology_questions(legacy_id);
 CREATE INDEX idx_anthology_questions_conversation ON anthology_questions(conversation_id);
 CREATE INDEX idx_anthology_questions_recording ON anthology_questions(recording_id);
+CREATE INDEX idx_anthology_questions_anthology_id ON anthology_questions(anthology_id);
 
 -- Responses
 CREATE INDEX idx_anthology_responses_legacy_id ON anthology_responses(legacy_id);
@@ -250,6 +302,7 @@ CREATE INDEX idx_anthology_responses_response ON anthology_responses(responds_to
 CREATE INDEX idx_anthology_responses_speaker ON anthology_responses(speaker_id);
 CREATE INDEX idx_anthology_responses_recording ON anthology_responses(recording_id);
 CREATE INDEX idx_anthology_responses_turn_number ON anthology_responses(conversation_id, turn_number);
+CREATE INDEX idx_anthology_responses_anthology_id ON anthology_responses(anthology_id);
 
 -- Word Timestamps
 CREATE INDEX idx_anthology_word_timestamps_response ON anthology_word_timestamps(response_id);
@@ -261,6 +314,7 @@ CREATE INDEX idx_anthology_word_timestamps_question_order ON anthology_word_time
 -- ROW LEVEL SECURITY (RLS)
 -- ============================================
 -- Enable RLS on all tables
+ALTER TABLE anthology_anthologies ENABLE ROW LEVEL SECURITY;
 ALTER TABLE anthology_recordings ENABLE ROW LEVEL SECURITY;
 ALTER TABLE anthology_conversations ENABLE ROW LEVEL SECURITY;
 ALTER TABLE anthology_conversation_recordings ENABLE ROW LEVEL SECURITY;
@@ -270,6 +324,7 @@ ALTER TABLE anthology_responses ENABLE ROW LEVEL SECURITY;
 ALTER TABLE anthology_word_timestamps ENABLE ROW LEVEL SECURITY;
 
 -- Public read access (adjust based on your needs)
+CREATE POLICY "Public read access" ON anthology_anthologies FOR SELECT USING (true);
 CREATE POLICY "Public read access" ON anthology_recordings FOR SELECT USING (true);
 CREATE POLICY "Public read access" ON anthology_conversations FOR SELECT USING (true);
 CREATE POLICY "Public read access" ON anthology_conversation_recordings FOR SELECT USING (true);
@@ -297,6 +352,9 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- Triggers for updated_at
+CREATE TRIGGER update_anthology_anthologies_updated_at BEFORE UPDATE ON anthology_anthologies
+    FOR EACH ROW EXECUTE FUNCTION anthology_update_updated_at_column();
+
 CREATE TRIGGER update_anthology_recordings_updated_at BEFORE UPDATE ON anthology_recordings
     FOR EACH ROW EXECUTE FUNCTION anthology_update_updated_at_column();
 
@@ -370,6 +428,8 @@ GROUP BY q.id, q.legacy_id, q.question_text, q.facilitator, c.title, q.created_a
 -- ============================================
 -- COMMENTS
 -- ============================================
+
+COMMENT ON TABLE anthology_anthologies IS 'Top-level dataset partition (collection of conversations)';
 
 COMMENT ON TABLE anthology_recordings IS 'Audio files that can be linked to conversations or individual nodes';
 COMMENT ON TABLE anthology_conversations IS 'Discussion sessions containing questions and responses';
