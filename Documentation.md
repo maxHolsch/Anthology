@@ -612,6 +612,39 @@ The sensemaking pipeline (`api/_lib/sensemaking.ts`) processes conversation audi
 
 ---
 
+## Semantic Layout & Embeddings
+
+Anthology uses a semantic layout engine to position response nodes based on the similarity of their content.
+
+### 1. Embedding Generation (Backend)
+- **Model**: OpenAI `text-embedding-3-small`
+- **Output**: 1536-dimensional vectors
+- **Content**: The `speaker_text` of each response is embedded.
+- **Storage**: Stored in the `embedding` column of the `anthology_responses` table as a vector string.
+- **Trigger**: Currently manual via `database/backfill_embeddings.ts` or during specific API flows.
+
+### 2. UMAP Projection (Frontend)
+- **Library**: `umap-js` (client-side execution)
+- **File**: `src/utils/semanticLayout.ts`
+- **Process**:
+  1. Frontend loads all response embeddings.
+  2. UMAP projects high-dimensional vectors (1536d) down to 2D coordinates (x, y).
+  3. Coordinates are scaled to fit a visual range (default ±500px).
+- **Result**: Responses with similar content appear physically closer together in the graph.
+
+### 3. D3 Integration
+- **Fixed Positions**: The calculated UMAP coordinates are assigned to `fx` (fixed x) and `fy` (fixed y) properties on the D3 nodes.
+- **Physics**: This overrides the default D3 force simulation physics for position, meaning nodes remain "pinned" to their semantic location while edges still exert some influence.
+
+> [!IMPORTANT]
+> **"All or Nothing" Fallback**
+> The semantic layout is strictly "All or Nothing".
+> - **Condition**: `responses.length === responsesWithEmbeddings.length`
+> - **Behavior**: If **even a single response** is missing an embedding (e.g., empty text, failed backfill), the system completely disables UMAP.
+> - **Fallback**: The layout reverts to a "Radial Orbit" mode, where responses are positioned in a circle around their parent question.
+
+---
+
 ## Component Architecture
 
 ### Map Components (`components/Map/`)
