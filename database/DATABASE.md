@@ -189,6 +189,15 @@ select
 
 If uploads/playback fail, verify the bucket name is exactly `Recordings`.
 
+## Storage bucket (conversation uploads)
+
+The "Create anthology" flow uploads raw conversation files to Supabase Storage.
+
+- Canonical bucket name: **`Conversations`**
+- Objects are stored under a per-anthology folder:
+  - `upload_conversations/<anthologySlug>/<timestamp>_<filename>`
+- Storage policies (anon uploads): [`storage_policies_conversations.sql`](database/storage_policies_conversations.sql:1)
+
 ### RLS errors
 
 - Storage upload blocked (`storage.objects`): run [`storage_policies_recordings.sql`](database/storage_policies_recordings.sql:1)
