@@ -162,6 +162,8 @@ interface ResponseNode {
   path_to_recording?: string;   // Optional standalone recording
   turn_number?: number;
   word_timestamps?: WordTimestamp[];
+  medium?: 'audio' | 'text';    // Response medium type
+  synchronicity?: 'sync' | 'asynchronous'; // Response synchronicity
 }
 ```
 
@@ -299,6 +301,8 @@ Response nodes in the visualization graph.
 - pull_quote: TEXT
 - recording_id: UUID (FK)
 - audio_start_ms, audio_end_ms: INTEGER
+- medium: TEXT ("audio" or "text")
+- synchronicity: TEXT ("sync" or "asynchronous")
 - turn_number: INTEGER
 - created_at, updated_at: TIMESTAMPTZ
 ```

@@ -209,6 +209,10 @@ CREATE TABLE anthology_responses (
     audio_start_ms INTEGER,
     audio_end_ms INTEGER,
 
+    -- Response characteristics
+    medium TEXT CHECK (medium IN ('audio', 'text')), -- Type of response: audio or text
+    synchronicity TEXT CHECK (synchronicity IN ('sync', 'asynchronous')), -- Synchronicity: sync or asynchronous
+
     -- Metadata
     turn_number INTEGER, -- Order in conversation
     notes TEXT,
@@ -441,4 +445,6 @@ COMMENT ON TABLE anthology_word_timestamps IS 'Word-level timestamps for karaoke
 
 COMMENT ON COLUMN anthology_responses.recording_id IS 'Individual recording for this response (allows per-node audio)';
 COMMENT ON COLUMN anthology_responses.responds_to_response_id IS 'For responses that respond to other responses instead of questions';
+COMMENT ON COLUMN anthology_responses.medium IS 'Type of response medium: "audio" or "text"';
+COMMENT ON COLUMN anthology_responses.synchronicity IS 'Synchronicity of the response: "sync" or "asynchronous"';
 COMMENT ON COLUMN anthology_word_timestamps.word_order IS 'Sequential order of words within the parent node';
