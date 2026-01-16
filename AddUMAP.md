@@ -156,7 +156,7 @@ export function projectEmbeddingsTo2D(
 
 ### Phase 4: Modify Initial Position Calculation
 
-**D3 v7 Behavior**: In D3 v7's `forceSimulation()`, nodes with existing `x` and `y` properties will use those values as starting positions. Nodes without `x`/`y` get random positions. This is simpler than D3 v3.
+**D3 v7 Behavior**: In D3 v7's `forceSimulation()`, nodes with existing `x` and `y` properties will use those values as starting positions. Nodes without `x`/`y` get random positions.
 
 **Current Code Flow** (from your codebase):
 1. `createGraphNodes()` in `dataProcessor.ts` creates nodes WITHOUT x/y
