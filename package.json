@@ -1,4 +1,4 @@
-{
+{ 
   "dependencies": {
     "@supabase/supabase-js": "^2.87.1"
   }
