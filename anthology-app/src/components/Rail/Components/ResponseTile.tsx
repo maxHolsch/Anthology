@@ -1,0 +1,150 @@
+/**
+ * ResponseTile - Response preview card for the QuestionView
+ * Visual Reference: https://www.figma.com/design/8rPqQMt3PEL7MhKhWqtSre/Anthology-III--Copy-?node-id=94-17579
+ */
+
+import { memo, useCallback } from 'react';
+import type { ResponseNode } from '@types';
+import { useAnthologyStore } from '@stores';
+import { SyncIcon, AsyncAudioIcon, AsyncTextIcon } from '@components/Icons/NodeIcons';
+import styles from './ResponseTile.module.css';
+
+interface ResponseTileProps {
+  response: ResponseNode;
+  onClick: (responseId: string) => void;
+  onHover: (responseId: string | null) => void;
+  showSeparator?: boolean;
+}
+
+export const ResponseTile = memo<ResponseTileProps>(({
+  response,
+  onClick,
+  onHover,
+  showSeparator = false
+}) => {
+  const speakerColorAssignments = useAnthologyStore(state => state.data.speakerColorAssignments);
+  const narrativeColorAssignments = useAnthologyStore(state => state.data.narrativeColorAssignments);
+  const colorAssignments = useAnthologyStore(state => state.data.colorAssignments);
+
+  // Get narrative color if response belongs to a narrative (matches D3 node logic)
+  const narrativeId = response.responds_to_narrative_id;
+  const narrativeColor = narrativeId
+    ? narrativeColorAssignments.get(narrativeId)
+    : null;
+
+  // Get speaker/conversation color as fallback
+  const speakerColorKey = `${response.conversation_id}:${response.speaker_name}`;
+  const speakerColorScheme = speakerColorAssignments.get(speakerColorKey)?.color ||
+                              colorAssignments.get(response.conversation_id)?.color ||
+                              '#999999';
+
+  // Priority: narrative color || speaker/conversation color || grey fallback
+  // This matches the exact logic in ResponseNode.tsx
+  const colorScheme = narrativeColor || speakerColorScheme;
+
+  // Handle SpeakerColorScheme objects (extract circle property for the dot)
+  const speakerColor = typeof colorScheme === 'string'
+    ? colorScheme
+    : colorScheme.circle;
+
+  const handleClick = useCallback(() => {
+    onClick(response.id);
+  }, [onClick, response.id]);
+
+  const handleMouseEnter = useCallback(() => {
+    onHover(response.id);
+  }, [onHover, response.id]);
+
+  const handleMouseLeave = useCallback(() => {
+    onHover(null);
+  }, [onHover]);
+
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      onClick(response.id);
+    }
+  }, [onClick, response.id]);
+
+  // Format duration from audio timestamps
+  const getDuration = () => {
+    if (response.audio_start !== undefined && response.audio_end !== undefined) {
+      const durationMs = response.audio_end - response.audio_start;
+      const seconds = Math.floor(durationMs / 1000);
+      const minutes = Math.floor(seconds / 60);
+      const remainingSeconds = seconds % 60;
+      return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+    }
+    return '0:30'; // Fallback
+  };
+
+  // Truncate text for preview - show more text per Figma
+  const previewText = response.speaker_text.length > 200
+    ? `"...${response.speaker_text.substring(0, 200)}..."`
+    : `"...${response.speaker_text}..."`;
+
+  // Determine which icon to use based on synchronicity and medium
+  const isSyncOrLegacy = !response.synchronicity || response.synchronicity === 'sync';
+  const isAsync = response.synchronicity === 'asynchronous';
+  const isTextMedium = response.medium === 'text';
+
+  const renderIcon = () => {
+    if (isSyncOrLegacy) {
+      return <SyncIcon color={speakerColor} size={14} />;
+    }
+    if (isAsync && !isTextMedium) {
+      return <AsyncAudioIcon color={speakerColor} size={14} />;
+    }
+    if (isAsync && isTextMedium) {
+      return <AsyncTextIcon color={speakerColor} size={14} />;
+    }
+    // Fallback to sync icon
+    return <SyncIcon color={speakerColor} size={14} />;
+  };
+
+  return (
+    <>
+      <div
+        className={styles.tile}
+        onClick={handleClick}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+        onKeyDown={handleKeyDown}
+        role="button"
+        tabIndex={0}
+        aria-label={`Response by ${response.speaker_name}`}
+      >
+        {/* Speaker Badge with node icon */}
+        <div className={styles.speakerBadge}>
+          <div className={styles.iconWrapper}>
+            {renderIcon()}
+          </div>
+          <span className={styles.speakerName}>{response.speaker_name}</span>
+        </div>
+
+        {/* Play Button with Duration */}
+        <div className={styles.playButton}>
+          <svg
+            className={styles.playIcon}
+            width="12"
+            height="12"
+            viewBox="0 0 12 12"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path d="M3 1.5L10 6L3 10.5V1.5Z" fill="currentColor" />
+          </svg>
+          <span className={styles.duration}>{getDuration()}</span>
+        </div>
+
+        {/* Preview Text */}
+        <p className={styles.previewText}>{previewText}</p>
+      </div>
+
+      {/* Separator Line */}
+      {showSeparator && <div className={styles.separator} />}
+    </>
+  );
+});
+
+ResponseTile.displayName = 'ResponseTile';

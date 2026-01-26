@@ -1,0 +1,316 @@
+const OPENAI_API_BASE = 'https://api.openai.com/v1';
+
+// ============================================
+// EMBEDDINGS
+// ============================================
+
+const EMBEDDINGS_MODEL = 'text-embedding-3-small';
+const EMBEDDINGS_DIMENSIONS = 1536;
+const EMBEDDINGS_BATCH_SIZE = 100; // OpenAI allows up to 2048 texts per call
+
+export type EmbeddingResult = {
+  embedding: number[];
+  index: number;
+};
+
+/**
+ * Generate embeddings for an array of texts using OpenAI's embeddings API.
+ * Returns embeddings in the same order as input texts.
+ */
+export async function generateEmbeddings({
+  apiKey,
+  texts,
+  model = EMBEDDINGS_MODEL,
+  timeoutMs = 30_000,
+}: {
+  apiKey: string;
+  texts: string[];
+  model?: string;
+  timeoutMs?: number;
+}): Promise<number[][]> {
+  if (texts.length === 0) return [];
+
+  const debugEnabled =
+    process.env.SENSEMAKING_DEBUG === '1' ||
+    process.env.SENSEMAKING_DEBUG === 'true' ||
+    process.env.NODE_ENV !== 'production';
+
+  const allEmbeddings: number[][] = new Array(texts.length);
+
+  // Process in batches
+  for (let i = 0; i < texts.length; i += EMBEDDINGS_BATCH_SIZE) {
+    const batch = texts.slice(i, i + EMBEDDINGS_BATCH_SIZE);
+
+    if (debugEnabled) {
+      // eslint-disable-next-line no-console
+      console.log('[openai.embeddings.batch]', {
+        batchStart: i,
+        batchSize: batch.length,
+        totalTexts: texts.length,
+        model,
+      });
+    }
+
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), timeoutMs);
+
+    try {
+      const resp = await fetch(`${OPENAI_API_BASE}/embeddings`, {
+        method: 'POST',
+        signal: controller.signal,
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model,
+          input: batch,
+          dimensions: EMBEDDINGS_DIMENSIONS,
+        }),
+      });
+
+      if (!resp.ok) {
+        const msg = await resp.text().catch(() => '');
+        throw new Error(`OpenAI embeddings request failed (${resp.status}): ${msg}`);
+      }
+
+      const json = await resp.json() as { data: EmbeddingResult[]; usage?: unknown };
+      const data = json.data;
+
+      // Map embeddings back to their original positions
+      for (const item of data) {
+        allEmbeddings[i + item.index] = item.embedding;
+      }
+
+      if (debugEnabled) {
+        // eslint-disable-next-line no-console
+        console.log('[openai.embeddings.batch.success]', {
+          batchStart: i,
+          embeddingsReceived: data.length,
+          usage: json.usage,
+        });
+      }
+    } finally {
+      clearTimeout(timeout);
+    }
+  }
+
+  return allEmbeddings;
+}
+
+export { EMBEDDINGS_DIMENSIONS, EMBEDDINGS_MODEL };
+
+// ============================================
+// JSON SCHEMA
+// ============================================
+
+type OpenAIJsonSchemaOptions = {
+  timeoutMs?: number;
+  retries?: number;
+  debugLabel?: string;
+  maxOutputTokens?: number;
+};
+
+function extractOutputText(openaiResponse: any): string {
+  // Chat Completions API format
+  if (openaiResponse?.choices?.[0]?.message?.content) {
+    return openaiResponse.choices[0].message.content;
+  }
+
+  // Legacy Responses API format (fallback)
+  if (typeof openaiResponse?.output_text === 'string') return openaiResponse.output_text;
+
+  const output = openaiResponse?.output;
+  if (!Array.isArray(output)) return '';
+
+  const texts: string[] = [];
+  for (const item of output) {
+    const content = item?.content;
+    if (!Array.isArray(content)) continue;
+    for (const c of content) {
+      // Some Responses API payloads provide structured output on `json`.
+      if (c && typeof c === 'object' && (c as any).json && typeof (c as any).json === 'object') {
+        try {
+          return JSON.stringify((c as any).json);
+        } catch {
+          // ignore and fall back to text extraction
+        }
+      }
+      const t = c?.text;
+      if (typeof t === 'string') texts.push(t);
+    }
+  }
+  return texts.join('\n').trim();
+}
+
+function safeJsonParse(text: string): any {
+  try {
+    return JSON.parse(text);
+  } catch {
+    const start = text.indexOf('{');
+    const end = text.lastIndexOf('}');
+    if (start >= 0 && end > start) {
+      try {
+        return JSON.parse(text.slice(start, end + 1));
+      } catch {
+        return null;
+      }
+    }
+    return null;
+  }
+}
+
+export async function openaiJsonSchema<T>({
+  apiKey,
+  model,
+  prompt,
+  schemaName,
+  schema,
+  // Some models can take 10s+ even for small JSON outputs; default to 30s.
+  timeoutMs = 30_000,
+  retries = 2,
+  debugLabel,
+  maxOutputTokens = 2000,
+}: {
+  apiKey: string;
+  model: string;
+  prompt: string;
+  schemaName: string;
+  schema: any;
+} & OpenAIJsonSchemaOptions): Promise<T> {
+  const debugEnabled =
+    process.env.SENSEMAKING_DEBUG === '1' ||
+    process.env.SENSEMAKING_DEBUG === 'true' ||
+    process.env.NODE_ENV !== 'production';
+  const logPrompts = process.env.SENSEMAKING_LOG_PROMPTS === '1' || process.env.SENSEMAKING_LOG_PROMPTS === 'true';
+  const logOutputs = process.env.SENSEMAKING_LOG_OUTPUTS === '1' || process.env.SENSEMAKING_LOG_OUTPUTS === 'true';
+  const label = debugLabel || schemaName;
+
+  const maxAttempts = Math.max(1, (Number.isFinite(retries) ? retries : 0) + 1);
+
+  let lastErr: unknown = null;
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), Math.max(1, timeoutMs));
+
+    const t0 = Date.now();
+    if (debugEnabled) {
+      // eslint-disable-next-line no-console
+      console.log('[openai.json_schema.start]', {
+        label,
+        schemaName,
+        model,
+        attempt,
+        maxAttempts,
+        timeoutMs,
+        maxOutputTokens,
+        promptChars: typeof prompt === 'string' ? prompt.length : null,
+        promptPreview: logPrompts && typeof prompt === 'string' ? prompt.slice(0, 800) : undefined,
+      });
+    }
+
+    try {
+      const resp = await fetch(`${OPENAI_API_BASE}/chat/completions`, {
+        method: 'POST',
+        signal: controller.signal,
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model,
+          messages: [
+            {
+              role: 'user',
+              content: prompt,
+            },
+          ],
+          max_completion_tokens: maxOutputTokens,
+          response_format: {
+            type: 'json_schema',
+            json_schema: {
+              name: schemaName,
+              strict: true,
+              schema,
+            },
+          },
+        }),
+      });
+
+      if (!resp.ok) {
+        const msg = await resp.text().catch(() => '');
+        const err = new Error(msg || `OpenAI request failed (${resp.status})`);
+        (err as any).status = resp.status;
+
+        if (debugEnabled) {
+          // eslint-disable-next-line no-console
+          console.log('[openai.json_schema.http_error]', {
+            label,
+            schemaName,
+            model,
+            attempt,
+            status: resp.status,
+            durationMs: Date.now() - t0,
+            bodyPreview: logOutputs ? msg.slice(0, 1200) : undefined,
+          });
+        }
+
+        // Retry on rate limits / transient server errors.
+        if (attempt < maxAttempts && (resp.status === 429 || (resp.status >= 500 && resp.status <= 599))) {
+          lastErr = err;
+          continue;
+        }
+        throw err;
+      }
+
+      const json = await resp.json();
+      const outputText = extractOutputText(json);
+      const parsed = safeJsonParse(outputText);
+      if (!parsed) {
+        const preview = typeof outputText === 'string' ? outputText.slice(0, 500) : '';
+        throw new Error(`OpenAI returned non-JSON output${preview ? `: ${preview}` : ''}`);
+      }
+
+      if (debugEnabled) {
+        // eslint-disable-next-line no-console
+        console.log('[openai.json_schema.success]', {
+          label,
+          schemaName,
+          model,
+          attempt,
+          durationMs: Date.now() - t0,
+          outputChars: typeof outputText === 'string' ? outputText.length : null,
+          outputPreview: logOutputs && typeof outputText === 'string' ? outputText.slice(0, 1200) : undefined,
+        });
+      }
+      return parsed as T;
+    } catch (e) {
+      lastErr = e;
+
+      const isAbort = (e as any)?.name === 'AbortError';
+      if (attempt < maxAttempts && isAbort) {
+        if (debugEnabled) {
+          // eslint-disable-next-line no-console
+          console.log('[openai.json_schema.retry_abort]', {
+            label,
+            schemaName,
+            model,
+            attempt,
+            durationMs: Date.now() - t0,
+          });
+        }
+        continue;
+      }
+
+      if (isAbort) {
+        throw new Error(`OpenAI request timed out after ${Math.max(1, timeoutMs)}ms`);
+      }
+
+      throw e;
+    } finally {
+      clearTimeout(timeout);
+    }
+  }
+
+  throw lastErr instanceof Error ? lastErr : new Error('OpenAI request failed');
+}

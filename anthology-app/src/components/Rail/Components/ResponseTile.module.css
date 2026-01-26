@@ -1,0 +1,106 @@
+/* ResponseTile styles - Redesigned to match Figma Question View */
+
+.tile {
+  background-color: white;
+  padding: 0;
+  cursor: pointer;
+  transition: all 150ms ease;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.tile:hover {
+  opacity: 0.9;
+}
+
+.tile:focus-visible {
+  outline: 2px solid rgba(0, 0, 0, 0.2);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.tile:active {
+  transform: scale(0.99);
+}
+
+/* Speaker Badge - Colored dot + name */
+.speakerBadge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.colorDot {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background-color: #999999; /* Fallback color */
+}
+
+.iconWrapper {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.speakerName {
+  font-family: 'Hedvig Letters Sans', -apple-system, sans-serif;
+  font-size: 13px;
+  font-weight: 400; /* Regular weight per Figma */
+  line-height: 1.4;
+  color: #000000;
+}
+
+/* Play Button with Duration */
+.playButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  border: 1px solid #ebebeb; /* Light border per Figma */
+  border-radius: 8px;
+  background-color: white;
+  width: fit-content;
+  margin-bottom: 8px;
+}
+
+.playIcon {
+  width: 12px;
+  height: 12px;
+  color: rgba(0, 0, 0, 0.9);
+  flex-shrink: 0;
+}
+
+.duration {
+  font-family: 'Hedvig Letters Sans', -apple-system, sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.4;
+  color: rgba(0, 0, 0, 0.9);
+}
+
+/* Preview Text */
+.previewText {
+  font-family: 'Hedvig Letters Sans', -apple-system, sans-serif;
+  font-size: 13px;
+  line-height: 1.4;
+  color: rgba(0, 0, 0, 0.8); /* 80% opacity per Figma */
+  margin: 0;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+/* Separator Line between tiles */
+.separator {
+  width: 100%;
+  height: 1px;
+  background-color: rgba(0, 0, 0, 0.1);
+  margin: 12px 0;
+}

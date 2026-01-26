@@ -1,0 +1,60 @@
+/* ConversationsView styles - Based on Figma design */
+
+.container {
+  width: 100%;
+  background-color: #ffffff; /* Pure white background per Figma */
+  position: relative;
+}
+
+.logo {
+  width: 24px;
+  height: 24px;
+  position: absolute;
+  top: 32px;
+  left: 32px;
+}
+
+.mainTitle {
+  font-family: 'Hedvig Letters Sans', -apple-system, sans-serif;
+  font-size: 20px; /* Match Figma: 20px */
+  line-height: 1.33;
+  color: #000000;
+  font-weight: 400; /* Regular weight */
+  margin: 0;
+  padding: 80px 32px 0 32px; /* Top padding positions it correctly, left/right padding 32px */
+  max-width: 320px; /* Increased width for longer text */
+  white-space: pre-wrap;
+}
+
+.sectionHeader {
+  font-family: 'Hedvig Letters Sans', -apple-system, sans-serif;
+  font-size: 11px; /* Match Figma: 11px */
+  line-height: 1.4;
+  color: rgba(0, 0, 0, 0.7); /* 70% opacity per Figma */
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 40px 32px 27px 32px; /* Spacing from title to section header */
+  font-weight: 400; /* Regular weight */
+}
+
+.questionList {
+  display: flex;
+  flex-direction: column;
+  gap: 32px; /* Increased spacing between tiles per Figma */
+  padding: 32px 32px 0 32px; /* Top padding for spacing from tabs, left/right padding to align with design */
+}
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-xl, 48px) var(--spacing-md, 16px);
+  text-align: center;
+}
+
+.emptyState p {
+  color: var(--color-text-secondary, rgba(0, 0, 0, 0.6));
+  font-size: var(--text-body, 14px);
+  margin: 0;
+}

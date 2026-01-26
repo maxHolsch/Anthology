@@ -1,0 +1,284 @@
+import { useEffect, useCallback, useMemo } from 'react';
+import * as d3 from 'd3';
+import { useAnthologyStore, useVisualizationStore, useInteractionStore } from '@stores';
+import { useD3Drag } from '@hooks';
+import { QuestionNode } from './QuestionNode';
+import { NarrativeLabelNode } from './NarrativeLabelNode';
+import { ResponseNode } from './ResponseNode';
+import { PullQuoteNode } from './PullQuoteNode';
+import { EdgePath } from './EdgePath';
+import { getEdgeOpacity } from '@utils';
+import type { GraphNode, GraphEdge } from '@types';
+
+/**
+ * D3Visualization component - bridges D3 simulation with React rendering
+ * Handles node position updates and renders all graph elements
+ */
+export function D3Visualization() {
+  const nodesMap = useAnthologyStore(state => state.data.nodes);
+  const edgesMap = useAnthologyStore(state => state.data.edges);
+  const selectQuestion = useAnthologyStore(state => state.selectQuestion);
+  const selectNarrative = useAnthologyStore(state => state.selectNarrative);
+  const selectResponse = useAnthologyStore(state => state.selectResponse);
+  const hoverNode = useAnthologyStore(state => state.hoverNode);
+  const selectedNodes = useAnthologyStore(state => state.selection.selectedNodes);
+  const mapViewMode = useAnthologyStore(state => state.view.mapViewMode);
+
+  // Get D3-mutated nodes with positions from VisualizationStore
+  const simulationNodes = useVisualizationStore(state => state.simulationNodes);
+  const allEdges = useMemo(() => Array.from(edgesMap.values()), [edgesMap]);
+
+  // Filter edges based on map view mode
+  // response-response edges (async replies) are visible in BOTH views
+  const edges = useMemo(() => {
+    const chronoCount = allEdges.filter(e => e.edgeType === 'chronological').length;
+    const qrCount = allEdges.filter(e => e.edgeType === 'question-response').length;
+    const rrCount = allEdges.filter(e => e.edgeType === 'response-response').length;
+    const noTypeCount = allEdges.filter(e => !e.edgeType).length;
+    console.log(`[D3Visualization] Edge counts - chrono: ${chronoCount}, q-r: ${qrCount}, r-r: ${rrCount}, no-type: ${noTypeCount}, mode: ${mapViewMode}`);
+
+    return allEdges.filter(edge => {
+      // Response-to-response edges (async replies) are always visible
+      if (edge.edgeType === 'response-response') {
+        return true;
+      }
+
+      if (mapViewMode === 'narrative') {
+        // Narrative view: show chronological (green) edges
+        return edge.edgeType === 'chronological';
+      } else {
+        // Question view: show question-response edges
+        return edge.edgeType === 'question-response';
+      }
+    });
+  }, [allEdges, mapViewMode]);
+
+  // Always call useMemo (never conditional)
+  const fallbackNodes = useMemo(() => Array.from(nodesMap.values()), [nodesMap]);
+
+  const simulation = useVisualizationStore(state => state.simulation);
+  const needsUpdate = useVisualizationStore(state => state.needsUpdate);
+  const setNeedsUpdate = useVisualizationStore(state => state.setNeedsUpdate);
+  useVisualizationStore(state => state.tickCount); // Subscribe to tick updates
+
+  // Use simulationNodes for rendering (these have D3-updated positions)
+  // Fall back to store nodes if simulation hasn't started yet
+  const nodes = simulationNodes.length > 0 ? simulationNodes : fallbackNodes;
+
+  const showTooltip = useInteractionStore(state => state.showTooltip);
+  const hideTooltip = useInteractionStore(state => state.hideTooltip);
+
+  // Get container ref to fix drag coordinate issue
+  const containerRef = useVisualizationStore(state => state.containerRef);
+
+  // Create drag behavior
+  const { createDragBehavior } = useD3Drag(
+    simulation,
+    // We need to wrap the containerRef from store in a ref object structure 
+    // because the hook expects a React RefObject
+    { current: containerRef } as React.RefObject<SVGGElement | null>
+  );
+
+  // Apply drag behavior to all node DOM elements
+  // This bridges React-rendered nodes with D3 drag behavior
+  useEffect(() => {
+    if (!simulation || nodes.length === 0) return;
+
+    const dragBehavior = createDragBehavior();
+    if (!dragBehavior) return;
+
+    // Select all node groups rendered by React
+    const nodeGroups = d3.selectAll('.node-group');
+
+    // Bind node data to DOM elements via __data__ property
+    // This allows D3 drag behavior to access node data
+    nodeGroups.each(function () {
+      const element = this as SVGGElement;
+      const nodeId = element.getAttribute('data-node-id');
+
+      if (nodeId) {
+        const nodeData = nodes.find(n => n.id === nodeId);
+        if (nodeData) {
+          (element as any).__data__ = nodeData;
+        }
+      }
+    });
+
+    // Apply drag behavior - D3 will use __data__ property
+    // Type assertion to match D3's generic selection type
+    nodeGroups.call(dragBehavior as any);
+
+    // Cleanup: remove drag handlers on unmount
+    return () => {
+      d3.selectAll('.node-group').on('.drag', null);
+    };
+  }, [simulation, createDragBehavior, nodes]);
+
+  // Force re-render when simulation ticks
+  useEffect(() => {
+    if (needsUpdate) {
+      setNeedsUpdate(false);
+    }
+  }, [needsUpdate, setNeedsUpdate]);
+
+  // Handle node click - differentiate between question, narrative_label, and response nodes
+  const handleNodeClick = useCallback((node: GraphNode) => {
+    if (node.type === 'question') {
+      selectQuestion(node.id);
+    } else if (node.type === 'narrative_label') {
+      // Extract narrative ID from label node
+      const narrativeId = (node.data as any).narrative_id;
+      selectNarrative(narrativeId);
+    } else if (node.type === 'response') {
+      selectResponse(node.id);
+    }
+
+    // Center on node in future phase (zoom integration)
+    // const { centerOnNode } = useD3Zoom(...);
+    // centerOnNode(node.x ?? 0, node.y ?? 0, 1.5);
+  }, [selectQuestion, selectNarrative, selectResponse]);
+
+  // Handle node hover with mouse position tracking
+  const handleNodeMouseEnter = useCallback((node: GraphNode, event: React.MouseEvent) => {
+    hoverNode(node.id);
+
+    // Show tooltip only for response nodes (not questions)
+    if (node.data.type === 'response') {
+      const preview = node.data.speaker_text.slice(0, 100) + (node.data.speaker_text.length > 100 ? '...' : '');
+      showTooltip(preview, event.clientX, event.clientY, node.id);
+    }
+  }, [hoverNode, showTooltip]);
+
+  const handleNodeMouseLeave = useCallback(() => {
+    hoverNode(null);
+    hideTooltip();
+  }, [hoverNode, hideTooltip]);
+
+  // Apply drag behavior to nodes via D3 (would need ref access)
+  // This is a simplified version - full implementation would use d3.select()
+
+  // Helper function to check if node has valid position
+  const hasValidPosition = (node: GraphNode): boolean => {
+    return typeof node.x === 'number' &&
+      typeof node.y === 'number' &&
+      !isNaN(node.x) &&
+      !isNaN(node.y);
+  };
+
+  // Separate nodes by type (with position validation)
+  // Filter based on mapViewMode:
+  // - Narrative view: hide question nodes, show narrative labels
+  // - Question view: show question nodes, hide narrative labels
+  const anchorNodes = mapViewMode === 'question'
+    ? nodes.filter((n: GraphNode) => n.type === 'question' && hasValidPosition(n))
+    : []; // Hide question nodes in narrative view
+
+  const narrativeLabelNodes = mapViewMode === 'narrative'
+    ? nodes.filter((n: GraphNode) => n.type === 'narrative_label' && hasValidPosition(n))
+    : []; // Hide narrative labels in question view
+
+  const responseNodesWithPullQuote = nodes.filter((n: GraphNode) =>
+    n.type === 'response' && (n.data as any).pull_quote && hasValidPosition(n)
+  );
+  const responseNodesStandard = nodes.filter((n: GraphNode) =>
+    n.type === 'response' && !(n.data as any).pull_quote && hasValidPosition(n)
+  );
+
+  return (
+    <g className="visualization-layer">
+      {/* Render edges first (background layer) */}
+      <g className="edges">
+        {edges.map((edge: GraphEdge) => {
+          // Safely extract source and target IDs with null checks
+          if (!edge.source || !edge.target) {
+            return null;
+          }
+
+          const sourceId = typeof edge.source === 'string' ? edge.source : edge.source.id;
+          const targetId = typeof edge.target === 'string' ? edge.target : edge.target.id;
+
+          if (!sourceId || !targetId) {
+            return null;
+          }
+
+          const sourceNode = nodes.find((n: GraphNode) => n.id === sourceId);
+          const targetNode = nodes.find((n: GraphNode) => n.id === targetId);
+
+          // Validate both nodes exist and have valid positions
+          if (!sourceNode || !targetNode ||
+            !hasValidPosition(sourceNode) || !hasValidPosition(targetNode)) {
+            return null;
+          }
+
+          const sourceSelected = selectedNodes.has(sourceId);
+          const targetSelected = selectedNodes.has(targetId);
+          const anySelected = selectedNodes.size > 0;
+
+          const opacity = getEdgeOpacity(sourceSelected, targetSelected, anySelected);
+          const edgeId = `${sourceId}-${targetId}`;
+
+          // Use source node's color for the edge
+          const edgeColor = sourceNode.color || edge.color || '#000000';
+
+          return (
+            <EdgePath
+              key={edgeId}
+              edge={edge}
+              sourceNode={sourceNode}
+              targetNode={targetNode}
+              color={edgeColor}
+              opacity={opacity}
+            />
+          );
+        })}
+      </g>
+
+      {/* Render nodes (foreground layer) */}
+      <g className="nodes">
+        {/* Standard response nodes (circles) - render first (background) */}
+        {responseNodesStandard.map((node: GraphNode) => (
+          <ResponseNode
+            key={node.id}
+            node={node}
+            onClick={handleNodeClick}
+            onMouseEnter={handleNodeMouseEnter}
+            onMouseLeave={handleNodeMouseLeave}
+          />
+        ))}
+
+        {/* Pull quote response nodes (rectangles) - render second (middle) */}
+        {responseNodesWithPullQuote.map((node: GraphNode) => (
+          <PullQuoteNode
+            key={node.id}
+            node={node}
+            onClick={handleNodeClick}
+            onMouseEnter={handleNodeMouseEnter}
+            onMouseLeave={handleNodeMouseLeave}
+          />
+        ))}
+
+        {/* Question/Narrative nodes - render second to last */}
+        {anchorNodes.map((node: GraphNode) => (
+          <QuestionNode
+            key={node.id}
+            node={node}
+            onClick={handleNodeClick}
+            onMouseEnter={handleNodeMouseEnter}
+            onMouseLeave={handleNodeMouseLeave}
+          />
+        ))}
+
+        {/* Narrative label nodes - render LAST (top layer for wayfinding) */}
+        {narrativeLabelNodes.map((node: GraphNode) => (
+          <NarrativeLabelNode
+            key={node.id}
+            node={node}
+            onClick={handleNodeClick}
+            onMouseEnter={handleNodeMouseEnter}
+            onMouseLeave={handleNodeMouseLeave}
+          />
+        ))}
+      </g>
+    </g>
+  );
+}

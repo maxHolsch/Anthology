@@ -1,0 +1,86 @@
+/* SingleView styles - Matches Figma design: node-id=207-1114 */
+
+.container {
+  width: 100%;
+  height: 100%;
+  background: white;
+  position: relative;
+  overflow-y: auto;
+  padding: 32px;
+}
+
+.container > :first-child {
+  margin-bottom: 24px;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  max-width: 100%;
+}
+
+.audioSection {
+  display: flex;
+  align-items: center;
+}
+
+.respondButton {
+  align-self: flex-start;
+  appearance: none;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  background: #fff;
+  color: rgba(0, 0, 0, 0.85);
+  padding: 10px 12px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.respondButton:hover {
+  background: rgba(0, 0, 0, 0.03);
+}
+
+.responseText {
+  font-family: 'Hedvig Letters Sans', -apple-system, sans-serif;
+  font-size: 13px;
+  line-height: 1.7;
+  color: rgba(0, 0, 0, 0.8);
+  min-width: 100%;
+  width: min-content;
+}
+
+/* Word highlighting for audio playback */
+.responseText :global(.highlighted) {
+  background-color: var(--color-highlight, #FFE082);
+  transition: background-color 150ms ease;
+}
+
+.emptyState {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 16px;
+  text-align: center;
+  height: 100%;
+}
+
+.emptyState p {
+  color: rgba(0, 0, 0, 0.6);
+  font-size: 14px;
+  margin: 0;
+  font-family: var(--font-primary, 'Hedvig Letters Sans', -apple-system, sans-serif);
+}
+
+/* Gradient fade at the bottom for scroll indication */
+.container::after {
+  content: '';
+  position: sticky;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 45px;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1));
+  pointer-events: none;
+}
