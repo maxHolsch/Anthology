@@ -1,0 +1,39 @@
+.physics-control {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 100;
+    pointer-events: auto;
+}
+
+.physics-toggle {
+    background: transparent;
+    color: transparent;
+    border: 1px solid transparent;
+    padding: 8px 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    opacity: 0;
+}
+
+.physics-toggle:hover {
+    background: transparent;
+    opacity: 0;
+}
+
+.physics-toggle:active {
+    opacity: 0;
+}
+
+.physics-toggle.active {
+    background: transparent;
+    border-color: transparent;
+    opacity: 0;
+}

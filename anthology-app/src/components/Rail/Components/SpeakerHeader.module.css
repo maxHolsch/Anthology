@@ -1,0 +1,23 @@
+.container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.avatar {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.speakerName {
+  font-family: 'Hedvig Letters Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.33;
+  color: rgba(0, 0, 0, 0.9);
+  margin: 0;
+}

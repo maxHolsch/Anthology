@@ -1,0 +1,36 @@
+/* QuestionContext styles - Matches Figma node-id=211-362 */
+
+.container {
+  display: flex;
+  align-items: flex-start;
+}
+
+.content {
+  border: 1px solid #f2f2f2;
+  border-radius: 8px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.label {
+  font-family: 'Hedvig Letters Sans', -apple-system, sans-serif;
+  font-size: 12px;
+  line-height: 1.4;
+  color: rgba(0, 0, 0, 0.5);
+  margin: 0;
+  font-weight: 400;
+}
+
+.questionText {
+  font-family: 'Hedvig Letters Sans', -apple-system, sans-serif;
+  font-size: 12px;
+  line-height: 1.4;
+  color: rgba(0, 0, 0, 0.8);
+  margin: 0;
+  opacity: 0.8;
+  font-weight: 400;
+}

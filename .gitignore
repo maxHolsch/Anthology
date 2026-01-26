@@ -1,1 +1,5 @@
 .DS_Store
+anthology-app/dist/
+node_modules/
+anthology-app/supabase/.temp/
+anthology-app/public/recordings/
